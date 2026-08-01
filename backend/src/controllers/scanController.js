@@ -1,5 +1,6 @@
 const Scan = require("../models/Scan");
 const validateGitHubRepository = require("../utils/validateRepository");
+const generateScanId = require("../utils/generateScanId");
 
 const createScan = async (req, res) => {
     try {
@@ -23,7 +24,8 @@ const createScan = async (req, res) => {
 
         // Save scan in MongoDB
         const scan = await Scan.create({
-            repositoryUrl,
+        scanId: generateScanId(),
+        repositoryUrl,
         });
 
         return res.status(201).json({

@@ -8,6 +8,12 @@ const scanSchema = new mongoose.Schema(
             trim: true,
         },
 
+        scanId: {
+            type: String,
+            required: true,
+            unique: true,
+        },
+        
         status: {
             type: String,
             enum: ["Pending", "Scanning", "Completed", "Failed"],
