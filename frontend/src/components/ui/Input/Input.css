@@ -1,0 +1,292 @@
+/* ==========================================================
+   PATCHFORGE AI INPUT
+   ========================================================== */
+
+.pf-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pf-input-full {
+  width: 100%;
+}
+
+/* ==========================================================
+   LABEL
+   ========================================================== */
+
+.pf-input-label {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.pf-required {
+  color: #ef4444;
+  margin-left: 4px;
+}
+
+/* ==========================================================
+   INPUT CONTAINER
+   ========================================================== */
+
+.pf-input-container {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  min-height: 56px;
+
+  border-radius: 16px;
+
+  background: rgba(255,255,255,0.03);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  transition: all .35s ease;
+
+  overflow: hidden;
+}
+
+/* ==========================================================
+   FOCUS GLOW
+   ========================================================== */
+
+.pf-input-container:focus-within {
+
+  border-color: rgba(59,130,246,.75);
+
+  box-shadow:
+      0 0 0 2px rgba(59,130,246,.18),
+      0 0 28px rgba(59,130,246,.20);
+
+  transform: translateY(-2px);
+
+}
+
+/* ==========================================================
+   SHINE EFFECT
+   ========================================================== */
+
+.pf-input-container::before {
+
+  content:"";
+
+  position:absolute;
+
+  top:0;
+
+  left:-120%;
+
+  width:45%;
+
+  height:100%;
+
+  background:linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.08),
+      transparent
+  );
+
+  transform:skewX(-22deg);
+
+  transition:.8s;
+
+}
+
+.pf-input-container:hover::before{
+
+left:150%;
+
+}
+
+/* ==========================================================
+   INPUT FIELD
+   ========================================================== */
+
+.pf-input{
+
+flex:1;
+
+height:56px;
+
+background:transparent;
+
+border:none;
+
+outline:none;
+
+padding:0 18px;
+
+font-size:15px;
+
+color:white;
+
+font-family:inherit;
+
+}
+
+.pf-input::placeholder{
+
+color:rgba(255,255,255,.35);
+
+}
+
+/* ==========================================================
+   ICONS
+   ========================================================== */
+
+.pf-input-icon{
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+padding:0 16px;
+
+color:rgba(255,255,255,.55);
+
+}
+
+.pf-input-icon.left{
+
+padding-right:0;
+
+}
+
+.pf-input-icon.right{
+
+padding-left:0;
+
+}
+
+/* ==========================================================
+   PASSWORD BUTTON
+   ========================================================== */
+
+.pf-password-toggle{
+
+background:none;
+
+border:none;
+
+outline:none;
+
+cursor:pointer;
+
+padding:0 18px;
+
+font-size:18px;
+
+transition:.25s;
+
+}
+
+.pf-password-toggle:hover{
+
+transform:scale(1.1);
+
+}
+
+/* ==========================================================
+   STATES
+   ========================================================== */
+
+.pf-error{
+
+border-color:#ef4444;
+
+box-shadow:
+
+0 0 20px rgba(239,68,68,.15);
+
+}
+
+.pf-success{
+
+border-color:#22c55e;
+
+box-shadow:
+
+0 0 20px rgba(34,197,94,.12);
+
+}
+
+.pf-disabled{
+
+opacity:.55;
+
+pointer-events:none;
+
+}
+
+/* ==========================================================
+   TEXT
+   ========================================================== */
+
+.pf-helper-text{
+
+font-size:13px;
+
+color:rgba(255,255,255,.55);
+
+padding-left:4px;
+
+}
+
+.pf-error-text{
+
+font-size:13px;
+
+color:#ef4444;
+
+padding-left:4px;
+
+}
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+
+@media(max-width:768px){
+
+.pf-input{
+
+font-size:14px;
+
+}
+
+.pf-input-container{
+
+min-height:52px;
+
+}
+
+}
+
+/* ==========================================================
+   ACCESSIBILITY
+   ========================================================== */
+
+@media(prefers-reduced-motion:reduce){
+
+*{
+
+animation:none !important;
+
+transition:none !important;
+
+}
+
+}

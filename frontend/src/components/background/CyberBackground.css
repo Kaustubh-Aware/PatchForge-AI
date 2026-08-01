@@ -1,0 +1,111 @@
+.cyber-background {
+  position: fixed;
+  inset: 0;
+
+  z-index: -10;
+
+  background:
+    radial-gradient(circle at top left,
+      rgba(59,130,246,.12),
+      transparent 40%),
+
+    radial-gradient(circle at bottom right,
+      rgba(168,85,247,.10),
+      transparent 45%),
+
+    #09090B;
+
+  overflow: hidden;
+}
+
+/* Animated Grid */
+
+.cyber-grid {
+
+  position: fixed;
+
+  inset: 0;
+
+  z-index: -9;
+
+  background-image:
+
+  linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+
+  linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+
+  background-size: 45px 45px;
+
+  mask-image: radial-gradient(circle, white 35%, transparent 100%);
+
+  animation: moveGrid 20s linear infinite;
+
+}
+
+@keyframes moveGrid {
+
+  from{
+
+    transform:translateY(0);
+
+  }
+
+  to{
+
+    transform:translateY(45px);
+
+  }
+
+}
+
+/* Stars */
+
+.cyber-stars{
+
+position:fixed;
+
+inset:0;
+
+z-index:-8;
+
+background-image:
+
+radial-gradient(circle,#ffffff 1px,transparent 1px);
+
+background-size:180px 180px;
+
+opacity:.12;
+
+}
+
+/* Mouse Glow */
+
+.mouse-glow{
+
+position:fixed;
+
+width:420px;
+
+height:420px;
+
+transform:translate(-50%,-50%);
+
+border-radius:50%;
+
+pointer-events:none;
+
+background:radial-gradient(circle,
+
+rgba(59,130,246,.18),
+
+transparent 70%);
+
+filter:blur(60px);
+
+transition:left .08s linear,
+
+top .08s linear;
+
+z-index:-7;
+
+}
