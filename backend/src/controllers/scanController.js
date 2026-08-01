@@ -1,9 +1,11 @@
 const Scan = require("../models/Scan");
+const validateGitHubRepository = require("../utils/validateRepository");
 
 const createScan = async (req, res) => {
     try {
         const { repositoryUrl } = req.body;
 
+        // Check if repository URL is provided
         if (!repositoryUrl) {
             return res.status(400).json({
                 success: false,
@@ -11,6 +13,15 @@ const createScan = async (req, res) => {
             });
         }
 
+        // Validate GitHub Repository URL
+        if (!validateGitHubRepository(repositoryUrl)) {
+            return res.status(400).json({
+                success: false,
+                message: "Please provide a valid GitHub repository URL.",
+            });
+        }
+
+        // Save scan in MongoDB
         const scan = await Scan.create({
             repositoryUrl,
         });
@@ -20,6 +31,7 @@ const createScan = async (req, res) => {
             message: "Scan created successfully",
             data: scan,
         });
+
     } catch (error) {
         console.error(error);
 
