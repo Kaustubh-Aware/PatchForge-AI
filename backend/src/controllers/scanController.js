@@ -2,6 +2,7 @@ const Scan = require("../models/Scan");
 const validateGitHubRepository = require("../utils/validateRepository");
 const generateScanId = require("../utils/generateScanId");
 
+// Create a new scan
 const createScan = async (req, res) => {
     try {
         const { repositoryUrl } = req.body;
@@ -24,8 +25,8 @@ const createScan = async (req, res) => {
 
         // Save scan in MongoDB
         const scan = await Scan.create({
-        scanId: generateScanId(),
-        repositoryUrl,
+            scanId: generateScanId(),
+            repositoryUrl,
         });
 
         return res.status(201).json({
@@ -44,6 +45,59 @@ const createScan = async (req, res) => {
     }
 };
 
+// Get all scans
+const getAllScans = async (req, res) => {
+    try {
+        const scans = await Scan.find().sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            total: scans.length,
+            data: scans,
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
+};
+
+// Get scan by Scan ID
+const getScanById = async (req, res) => {
+    try {
+
+        const { scanId } = req.params;
+
+        const scan = await Scan.findOne({ scanId });
+
+        if (!scan) {
+            return res.status(404).json({
+                success: false,
+                message: "Scan not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: scan,
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
+};
+
 module.exports = {
     createScan,
+    getAllScans,
+    getScanById,
 };
