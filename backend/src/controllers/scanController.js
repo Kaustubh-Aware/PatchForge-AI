@@ -2,7 +2,10 @@ const Scan = require("../models/Scan");
 const validateGitHubRepository = require("../utils/validateRepository");
 const generateScanId = require("../utils/generateScanId");
 
-// Create a new scan
+// ======================================================
+// Create a New Scan
+// ======================================================
+
 const createScan = async (req, res) => {
     try {
         const { repositoryUrl } = req.body;
@@ -45,9 +48,13 @@ const createScan = async (req, res) => {
     }
 };
 
-// Get all scans
+// ======================================================
+// Get All Scans
+// ======================================================
+
 const getAllScans = async (req, res) => {
     try {
+
         const scans = await Scan.find().sort({ createdAt: -1 });
 
         return res.status(200).json({
@@ -57,16 +64,21 @@ const getAllScans = async (req, res) => {
         });
 
     } catch (error) {
+
         console.error(error);
 
         return res.status(500).json({
             success: false,
             message: "Internal Server Error",
         });
+
     }
 };
 
-// Get scan by Scan ID
+// ======================================================
+// Get Scan By Scan ID
+// ======================================================
+
 const getScanById = async (req, res) => {
     try {
 
@@ -83,18 +95,25 @@ const getScanById = async (req, res) => {
 
         return res.status(200).json({
             success: true,
+            message: "Scan fetched successfully",
             data: scan,
         });
 
     } catch (error) {
+
         console.error(error);
 
         return res.status(500).json({
             success: false,
             message: "Internal Server Error",
         });
+
     }
 };
+
+// ======================================================
+// Export Controllers
+// ======================================================
 
 module.exports = {
     createScan,
