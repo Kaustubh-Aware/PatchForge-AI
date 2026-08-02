@@ -1,0 +1,415 @@
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin: 35px 0;
+}
+
+.stat-card {
+  position: relative;
+  overflow: hidden;
+
+  padding: 28px;
+
+  border-radius: 22px;
+
+  background: rgba(17, 25, 40, 0.82);
+
+  backdrop-filter: blur(20px);
+
+  border: 1px solid rgba(255,255,255,.06);
+
+  transition: .4s;
+
+  box-shadow:
+      0 10px 40px rgba(0,0,0,.35);
+
+  isolation: isolate;
+}
+
+.stat-card::before{
+  content:"";
+  position:absolute;
+  width:260px;
+  height:260px;
+
+  top:-140px;
+  right:-120px;
+
+  border-radius:50%;
+
+  opacity:.18;
+
+  transition:.5s;
+}
+
+.stat-card:hover{
+  transform:translateY(-10px);
+
+  border-color:rgba(255,255,255,.14);
+
+  box-shadow:
+      0 25px 60px rgba(0,0,0,.45);
+}
+
+.stat-card:hover::before{
+
+  transform:scale(1.3);
+
+}
+
+.blue::before{
+  background:#2f80ff;
+}
+
+.red::before{
+  background:#ff4b5c;
+}
+
+.cyan::before{
+  background:#00d4ff;
+}
+
+.purple::before{
+  background:#8b5cf6;
+}
+
+.stat-top{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  margin-bottom:30px;
+
+}
+
+.stat-icon{
+
+position:relative;
+
+width:60px;
+
+height:60px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+border-radius:18px;
+
+background:rgba(255,255,255,.06);
+
+backdrop-filter:blur(20px);
+
+color:white;
+
+overflow:visible;
+
+}
+
+.icon-ring{
+
+position:absolute;
+
+width:78px;
+
+height:78px;
+
+border-radius:50%;
+
+border:2px dashed rgba(255,255,255,.18);
+
+animation:spinRing 14s linear infinite;
+
+}
+
+@keyframes spinRing{
+
+100%{
+
+transform:rotate(360deg);
+
+}
+
+}
+
+.stat-trend{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:6px;
+
+  padding:7px 14px;
+
+  border-radius:50px;
+
+  font-size:.85rem;
+
+  font-weight:600;
+
+}
+
+.positive{
+
+  color:#39ff88;
+
+  background:rgba(57,255,136,.12);
+
+}
+
+.negative{
+
+  color:#ff5d5d;
+
+  background:rgba(255,93,93,.12);
+
+}
+
+.stat-value{
+
+  display:flex;
+
+  align-items:flex-end;
+
+  gap:2px;
+
+  margin-bottom:10px;
+
+  font-size:3rem;
+
+  font-weight:700;
+
+  color:white;
+
+  line-height:1;
+
+}
+
+.stat-value span{
+
+  font-size:3rem;
+
+}
+
+.stat-card h3{
+
+  color:white;
+
+  font-size:1.15rem;
+
+  margin-bottom:6px;
+
+}
+
+.stat-card p{
+
+  color:#9fb2d1;
+
+  margin-bottom:22px;
+
+  font-size:.92rem;
+
+}
+
+.progress-line{
+
+  width:100%;
+
+  height:8px;
+
+  border-radius:20px;
+
+  overflow:hidden;
+
+  background:rgba(255,255,255,.08);
+
+}
+
+.progress-fill{
+
+  width:100%;
+
+  height:100%;
+
+  border-radius:20px;
+
+  background:linear-gradient(
+      90deg,
+      #3b82f6,
+      #06b6d4,
+      #8b5cf6
+  );
+
+  background-size:200%;
+
+  animation:moveGradient 4s linear infinite;
+
+}
+
+@keyframes moveGradient{
+
+  0%{
+
+      background-position:0%;
+
+  }
+
+  100%{
+
+      background-position:200%;
+
+  }
+
+}
+
+.count-up-text{
+
+  font-weight:700;
+
+  font-size:3rem;
+
+}
+
+@media(max-width:900px){
+
+.stats-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+.stat-card::after{
+
+content:"";
+
+position:absolute;
+
+top:-150%;
+
+left:-50%;
+
+width:50%;
+
+height:400%;
+
+background:linear-gradient(
+
+90deg,
+
+transparent,
+
+rgba(255,255,255,.08),
+
+transparent
+
+);
+
+transform:rotate(25deg);
+
+animation:shine 7s linear infinite;
+
+pointer-events:none;
+
+}
+
+@keyframes shine{
+
+0%{
+
+left:-70%;
+
+}
+
+100%{
+
+left:170%;
+
+}
+
+}
+
+.ai-card{
+
+animation:aiPulse 3s ease-in-out infinite;
+
+}
+
+@keyframes aiPulse{
+
+0%{
+
+box-shadow:
+0 0 0 rgba(124,58,237,0);
+
+}
+
+50%{
+
+box-shadow:
+0 0 35px rgba(124,58,237,.18);
+
+}
+
+100%{
+
+box-shadow:
+0 0 0 rgba(124,58,237,0);
+
+}
+
+}
+
+.stat-card span.floating-dot{
+
+position:absolute;
+
+width:7px;
+
+height:7px;
+
+border-radius:50%;
+
+background:#60a5fa;
+
+opacity:.25;
+
+animation:floatDot 8s linear infinite;
+
+}
+
+@keyframes floatDot{
+
+0%{
+
+transform:
+translateY(40px);
+
+opacity:0;
+
+}
+
+30%{
+
+opacity:.4;
+
+}
+
+100%{
+
+transform:
+translateY(-180px);
+
+opacity:0;
+
+}
+
+}

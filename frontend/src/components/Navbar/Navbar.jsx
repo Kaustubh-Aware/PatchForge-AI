@@ -1,109 +1,94 @@
 import "./Navbar.css";
+import { Link } from "react-router-dom";
 
 import {
   ShieldCheck,
   Search,
-  Bell,
-  ChevronDown,
-  Sparkles,
-  GitBranch,
-   Cpu,
-  UserCircle2
+  Settings2
 } from "lucide-react";
 
 function Navbar() {
   return (
     <header className="navbar">
 
-      {/* ================= LEFT ================= */}
+      {/* ========================= */}
+      {/* LOGO */}
+      {/* ========================= */}
 
-      <div className="navbar__left">
+      <div className="navbar__logo">
 
-        <div className="logo">
+        <Link to="/" className="logo-link">
 
-          <div className="logo__icon">
-            <ShieldCheck size={22} />
+          <div className="logo-icon">
+            <ShieldCheck size={26} />
           </div>
 
-          <div className="logo__text">
+          <div className="logo-text">
             <h2>PatchForge AI</h2>
-            <span>AI Security Platform</span>
+            <span>AI Powered Security Platform</span>
           </div>
+
+        </Link>
+
+      </div>
+
+      {/* ========================= */}
+      {/* SEARCH */}
+      {/* ========================= */}
+
+      <div className="navbar__search">
+
+        <Search
+          size={18}
+          className="search-icon"
+        />
+
+        <input
+          type="text"
+          placeholder="Search repositories, CVEs, vulnerabilities..."
+        />
+
+        <div className="shortcut">
+
+          Ctrl + K
 
         </div>
 
       </div>
 
-      {/* ================= CENTER ================= */}
+      {/* ========================= */}
+      {/* ACTIONS */}
+      {/* ========================= */}
 
-      <div className="navbar__center">
+      <div className="navbar__actions">
 
-        <button className="repo-switcher">
+        {/* SETTINGS */}
 
-         <GitBranch size={17} />
+        <Link
+          to="/settings"
+          className="settings-btn"
+          title="Settings"
+        >
+          <Settings2 size={22} />
+        </Link>
 
-          <span>PatchForge-AI</span>
+        {/* LOGIN */}
 
-          <ChevronDown size={16} />
+        <Link
+          to="/login"
+          className="login-btn"
+        >
+          Login
+        </Link>
 
-        </button>
+        {/* SIGNUP */}
 
-        <div className="search-container">
-
-          <Search size={18} />
-
-          <input
-            type="text"
-            placeholder="Search repositories, CVEs, packages..."
-          />
-
-          <div className="shortcut">
-            CTRL K
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* ================= RIGHT ================= */}
-
-      <div className="navbar__right">
-
-        <div className="ai-status">
-
-          <span className="status-dot"></span>
-
-          <Cpu size={16} />
-
-          <span>AI ONLINE</span>
-
-        </div>
-
-        <button className="icon-button">
-
-          <Bell size={20} />
-
-          <span className="notification-badge">
-            3
-          </span>
-
-        </button>
-
-        <button className="quick-scan">
-
-          <Sparkles size={18} />
-
-          <span>Quick Scan</span>
-
-        </button>
-
-        <button className="profile-button">
-
-          <UserCircle2 size={22} />
-
-          <span>Guest</span>
-
-        </button>
+        <Link
+          to="/signup"
+          className="signup-btn-nav"
+        >
+          Sign Up
+        </Link>
 
       </div>
 
