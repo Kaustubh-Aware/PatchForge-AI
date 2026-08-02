@@ -83,8 +83,10 @@ const saveScanResults = async (
             totalDependencies: scanReport.totalDependencies,
             vulnerabilitiesFound: scanReport.vulnerabilitiesFound,
 
-            aiAnalysis:
-                scanReport.aiAnalysis.response
+                aiAnalysis:
+                    scanReport.aiAnalysis?.response ||
+                    scanReport.aiAnalysis ||
+                    "AI analysis not available"
 
             }
 

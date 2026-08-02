@@ -27,7 +27,7 @@ function ReportPage() {
 
                 if (response.success) {
 
-                    setReport(response.data);
+                    setReport(response.report);
 
                 }
 

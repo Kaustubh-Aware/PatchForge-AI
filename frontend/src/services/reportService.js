@@ -9,7 +9,7 @@ export const getReport = async (scanId) => {
 
     try {
 
-        const response = await api.get(`/scan/${scanId}`);
+        const response = await api.get(`/report/${scanId}`);
 
         return response.data;
 
