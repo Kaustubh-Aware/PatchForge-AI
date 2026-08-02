@@ -8,7 +8,7 @@ import ReportPage from "./pages/Report/ReportPage";
 import Login from "./pages/Login/Login";
 import NotFound from "./pages/NotFound/NotFound";
 import ScanPage from "./pages/Scan/ScanPage";
-import SuccessModal from "../../components/SuccessModal/SuccessModal";
+
 function App() {
   return (
     <>
@@ -21,12 +21,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <SuccessModal
-    open={false}
-    dependencies={44}
-    vulnerabilities={31}
-    onViewReport={() => {}}
-/>
+            
+   
             <Route path="/scan" element={<ScanPage />} />
             <Route path="/report/:scanId" element={<ReportPage />} />
             <Route path="/login" element={<Login />} />

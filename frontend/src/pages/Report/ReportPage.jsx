@@ -5,9 +5,9 @@ import { useParams } from "react-router-dom";
 
 import { getReport } from "../../services/reportService";
 
-import ReportCard from "../../components/ReportCard/ReportCard";
-import SeverityCard from "../../components/SeverityCard/SeverityCard";
-import VulnerabilityTable from "../../components/VulnerabilityTable/VulnerabilityTable";
+import ReportCard from "../../components/ReportCard";
+import SeverityCard from "../../components/SeverityCard";
+import VulnerabilityTable from "../../components/VulnerabilityTable";
 
 function ReportPage() {
 

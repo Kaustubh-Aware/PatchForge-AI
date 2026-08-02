@@ -3,7 +3,7 @@ import "./ScanPage.css";
 import RepoInput from "../../components/RepoInput";
 import ScanHistory from "../../components/ScanHistory";
 
-import { ShieldCheck, Github, Sparkles } from "lucide-react";
+import { ShieldCheck, GitBranch, Sparkles } from "lucide-react";
 
 function ScanPage() {
   return (
@@ -59,7 +59,7 @@ function ScanPage() {
 
         <div className="card-header">
 
-          <Github size={22} />
+          <GitBranch size={22} />
 
           <h2>Repository Scanner</h2>
 
