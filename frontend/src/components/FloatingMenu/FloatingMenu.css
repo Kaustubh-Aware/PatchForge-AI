@@ -1,0 +1,534 @@
+/* ==========================================================
+   PATCHFORGE AI • PREMIUM FLOATING SIDEBAR
+========================================================== */
+
+:root{
+
+    --sidebar-bg:#0b1120;
+    --sidebar-card:#111827;
+
+    --cyan:#06b6d4;
+    --blue:#2563eb;
+    --purple:#7c3aed;
+
+    --text:#ffffff;
+    --muted:#94a3b8;
+
+}
+
+/* ==========================================================
+   FLOATING BUTTON
+========================================================== */
+
+.floating-toggle{
+
+    position:fixed;
+
+    top:108px;
+    left:30px;
+
+    width:62px;
+    height:62px;
+
+    border:none;
+
+    border-radius:20px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    cursor:pointer;
+
+    color:white;
+
+   background:linear-gradient(
+    135deg,
+    #f97316,
+    #ef4444
+);
+
+box-shadow:
+    0 18px 45px rgba(239,68,68,.35),
+    0 0 35px rgba(249,115,22,.28);
+
+    transition:.35s;
+
+    z-index:9999;
+
+}
+
+.floating-toggle:hover{
+
+    transform:
+        translateY(-4px)
+        scale(1.05);
+
+    box-shadow:
+        0 22px 55px rgba(239,68,68,.45),
+        0 0 40px rgba(249,115,22,.35);
+
+}
+
+.floating-toggle.opened{
+
+    transform:rotate(90deg);
+
+}
+
+/* ==========================================================
+   OVERLAY
+========================================================== */
+
+.floating-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        rgba(3,7,18,.62);
+
+    backdrop-filter:blur(10px);
+
+    z-index:9990;
+
+    animation:fade .35s ease;
+
+}
+
+@keyframes fade{
+
+    from{
+
+        opacity:0;
+
+    }
+
+    to{
+
+        opacity:1;
+
+    }
+
+}
+
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+.floating-sidebar{
+
+    position:fixed;
+
+    top:95px;
+    left:24px;
+
+    width:330px;
+
+    height:calc(100vh - 120px);
+
+    border-radius:28px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(15,23,42,.98),
+            rgba(8,12,24,.98)
+        );
+
+    border:1px solid rgba(255,255,255,.07);
+
+    backdrop-filter:blur(28px);
+
+    box-shadow:
+
+        0 30px 70px rgba(0,0,0,.55),
+
+        inset 0 1px 0 rgba(255,255,255,.05);
+
+    display:flex;
+
+    flex-direction:column;
+
+    overflow:hidden;
+
+    transform:
+        translateX(-120%);
+
+    opacity:0;
+
+    transition:
+        transform .45s cubic-bezier(.2,.8,.2,1),
+        opacity .4s;
+
+    z-index:9995;
+
+}
+
+.floating-sidebar.show{
+
+    transform:translateX(0);
+
+    opacity:1;
+
+}
+
+/* ==========================================================
+   CLOSE BUTTON
+========================================================== */
+
+.sidebar-close{
+
+    position:absolute;
+
+    right:20px;
+    top:20px;
+
+    z-index:20;
+
+    width:40px;
+    height:40px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:rgba(255,255,255,.05);
+
+    color:#dbeafe;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.sidebar-close:hover{
+
+    background:#ef4444;
+
+    color:white;
+
+    transform:rotate(90deg);
+
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.sidebar-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    padding:34px 72px 26px 28px;
+
+}
+
+.brand-icon{
+
+    width:60px;
+    height:60px;
+
+    border-radius:18px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:white;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #06b6d4,
+
+            #2563eb
+
+        );
+
+    box-shadow:
+
+        0 0 30px rgba(37,99,235,.45);
+
+}
+
+.sidebar-header h2{
+
+    color:white;
+
+    font-size:1.35rem;
+
+    font-weight:700;
+
+}
+
+.sidebar-header span{
+
+    color:var(--muted);
+
+    font-size:.84rem;
+
+}
+
+.sidebar-divider{
+
+    height:1px;
+
+    background:
+
+        linear-gradient(
+
+            to right,
+
+            transparent,
+
+            rgba(255,255,255,.08),
+
+            transparent
+
+        );
+
+}
+
+/* ==========================================================
+   MENU
+========================================================== */
+
+.sidebar-menu{
+
+    flex:1;
+
+    overflow:auto;
+
+    padding:18px;
+
+}
+
+.sidebar-menu::-webkit-scrollbar{
+
+    width:6px;
+
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb{
+
+    background:#1d4ed8;
+
+    border-radius:50px;
+
+}
+
+.menu-card{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:15px 18px;
+
+    border-radius:18px;
+
+    margin-bottom:10px;
+
+    cursor:pointer;
+
+    color:#d6deee;
+
+    transition:.3s;
+
+    border:1px solid transparent;
+
+}
+
+.menu-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.menu-card svg{
+
+    transition:.3s;
+
+}
+
+.menu-card:hover{
+
+    transform:translateX(8px);
+
+    background:
+
+        rgba(255,255,255,.05);
+
+    border-color:
+
+        rgba(6,182,212,.25);
+
+}
+
+.menu-card:hover svg{
+
+    color:#22d3ee;
+
+}
+
+.menu-card.active{
+
+    background:
+
+        linear-gradient(
+
+            90deg,
+
+            rgba(37,99,235,.28),
+
+            rgba(6,182,212,.18)
+
+        );
+
+    border-color:
+
+        rgba(6,182,212,.35);
+
+    box-shadow:
+
+        inset 4px 0 0 #06b6d4,
+
+        0 0 22px rgba(6,182,212,.12);
+
+}
+
+.menu-card.active svg{
+
+    color:#22d3ee;
+
+}
+
+.menu-card span{
+
+    font-size:.97rem;
+
+    font-weight:600;
+
+}
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.sidebar-footer{
+
+    padding:22px;
+
+    border-top:1px solid rgba(255,255,255,.06);
+
+}
+
+.scan-button{
+
+    width:100%;
+
+    height:54px;
+
+    border:none;
+
+    border-radius:16px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:12px;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-size:1rem;
+
+    font-weight:700;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #2563eb,
+
+            #06b6d4
+
+        );
+
+    box-shadow:
+
+        0 15px 35px rgba(37,99,235,.28);
+
+    transition:.35s;
+
+}
+
+.scan-button:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+
+        0 20px 45px rgba(37,99,235,.38);
+
+}
+
+.sidebar-footer small{
+
+    display:block;
+
+    text-align:center;
+
+    margin-top:16px;
+
+    color:#64748b;
+
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width:900px){
+
+    .floating-sidebar{
+
+        width:290px;
+
+    }
+
+}
+
+@media(max-width:600px){
+
+    .floating-sidebar{
+
+        width:88%;
+
+        left:6%;
+
+    }
+
+}

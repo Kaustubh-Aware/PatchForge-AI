@@ -1,0 +1,92 @@
+.login-page{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#0f172a,#111827,#1e293b);
+    padding:40px;
+}
+
+.login-card{
+    width:430px;
+    background:rgba(15,23,42,.75);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:24px;
+    padding:45px;
+    box-shadow:0 25px 60px rgba(0,0,0,.4);
+}
+
+.login-logo{
+    text-align:center;
+    margin-bottom:35px;
+}
+
+.login-logo svg{
+    font-size:55px;
+    color:#38bdf8;
+}
+
+.login-logo h1{
+    color:#fff;
+    margin-top:15px;
+}
+
+.login-logo p{
+    color:#94a3b8;
+}
+
+.input-box{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:#172554;
+    padding:15px;
+    border-radius:14px;
+    margin-bottom:20px;
+}
+
+.input-box svg{
+    color:#38bdf8;
+    font-size:20px;
+}
+
+.input-box input{
+    width:100%;
+    border:none;
+    outline:none;
+    background:transparent;
+    color:white;
+    font-size:15px;
+}
+
+.login-btn{
+    width:100%;
+    margin-top:15px;
+    padding:15px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg,#2563eb,#06b6d4);
+    color:white;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.login-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 15px 35px rgba(37,99,235,.35);
+}
+
+.signup-link{
+    text-align:center;
+    color:#94a3b8;
+    margin-top:25px;
+}
+
+.signup-link a{
+    color:#38bdf8;
+    text-decoration:none;
+    font-weight:600;
+}
