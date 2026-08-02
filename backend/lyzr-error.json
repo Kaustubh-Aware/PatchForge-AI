@@ -1,0 +1,7 @@
+{
+  "message": "Request failed with status code 400",
+  "status": 400,
+  "data": {
+    "detail": "Invalid request."
+  }
+}
