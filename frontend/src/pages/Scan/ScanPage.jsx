@@ -1,12 +1,75 @@
 import "./ScanPage.css";
 
+import { useState } from "react";
+
 import RepoInput from "../../components/RepoInput";
 import ScanHistory from "../../components/ScanHistory";
+import SuccessModal from "../../components/SuccessModal/SuccessModal";
 
-import { ShieldCheck, GitBranch, Sparkles } from "lucide-react";
+import { createScan } from "../../services/scanService";
+
+import {
+  ShieldCheck,
+  GitBranch,
+  Sparkles,
+} from "lucide-react";
 
 function ScanPage() {
+
+  const [loading, setLoading] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
+
+  const [scanData, setScanData] = useState(null);
+
+  const startScan = async (repositoryUrl) => {
+
+    try {
+
+      setLoading(true);
+
+      const response = await createScan(repositoryUrl);
+
+      if (response.success) {
+
+        setScanData(response.data);
+
+        setShowModal(true);
+
+      }
+
+      else {
+
+        alert(response.message);
+
+      }
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      alert(
+
+        error?.message ||
+
+        "Unable to start scan."
+
+      );
+
+    }
+
+    finally {
+
+      setLoading(false);
+
+    }
+
+  };
+
   return (
+
     <main className="scan-page">
 
       {/* Hero */}
@@ -33,9 +96,9 @@ function ScanPage() {
 
           <p>
 
-            Analyze GitHub repositories for vulnerable dependencies,
-            outdated packages, CVEs and security risks using AI-powered
-            scanning.
+            Analyze GitHub repositories for vulnerable
+            dependencies, outdated packages, CVEs and
+            security risks using AI-powered scanning.
 
           </p>
 
@@ -53,7 +116,7 @@ function ScanPage() {
 
       </section>
 
-      {/* Repository Input */}
+      {/* Repository Scanner */}
 
       <section className="scan-input-card">
 
@@ -61,26 +124,42 @@ function ScanPage() {
 
           <GitBranch size={22} />
 
-          <h2>Repository Scanner</h2>
+          <h2>
+
+            Repository Scanner
+
+          </h2>
 
         </div>
 
-        <RepoInput />
+        <RepoInput
+
+          onScan={startScan}
+
+          loading={loading}
+
+        />
 
       </section>
 
-      {/* Information Cards */}
+      {/* Information */}
 
       <section className="scan-info-grid">
 
         <div className="info-card">
 
-          <h3>AI Powered Detection</h3>
+          <h3>
+
+            AI Powered Detection
+
+          </h3>
 
           <p>
 
-            Detect outdated packages, vulnerable dependencies,
-            supply-chain attacks and CVEs instantly.
+            Detect outdated packages,
+            vulnerable dependencies,
+            supply-chain attacks and CVEs
+            instantly.
 
           </p>
 
@@ -88,11 +167,16 @@ function ScanPage() {
 
         <div className="info-card">
 
-          <h3>Automatic Patch Suggestions</h3>
+          <h3>
+
+            Automatic Patch Suggestions
+
+          </h3>
 
           <p>
 
-            Receive intelligent upgrade recommendations generated
+            Receive intelligent upgrade
+            recommendations generated
             by PatchForge AI.
 
           </p>
@@ -101,12 +185,18 @@ function ScanPage() {
 
         <div className="info-card">
 
-          <h3>Security Reports</h3>
+          <h3>
+
+            Security Reports
+
+          </h3>
 
           <p>
 
-            Download premium reports with severity analysis,
-            dependency tree and mitigation steps.
+            Download premium reports with
+            severity analysis,
+            dependency tree and mitigation
+            steps.
 
           </p>
 
@@ -118,8 +208,36 @@ function ScanPage() {
 
       <ScanHistory />
 
+      {/* Success Modal */}
+
+      <SuccessModal
+
+        open={showModal}
+
+        repository={
+
+          scanData?.repositoryUrl || ""
+
+        }
+
+        scanId={
+
+          scanData?.scanId || ""
+
+        }
+
+        onClose={() =>
+
+          setShowModal(false)
+
+        }
+
+      />
+
     </main>
+
   );
+
 }
 
 export default ScanPage;

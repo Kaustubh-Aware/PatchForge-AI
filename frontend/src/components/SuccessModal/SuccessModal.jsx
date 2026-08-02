@@ -1,17 +1,15 @@
 import "./SuccessModal.css";
-import { CheckCircle2, ShieldCheck } from "lucide-react";
+import { CheckCircle2, GitBranch, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function SuccessModal({
-
     open,
-
-    dependencies,
-
-    vulnerabilities,
-
-    onViewReport
-
+    onClose,
+    repository,
+    scanId
 }) {
+
+    const navigate = useNavigate();
 
     if (!open) return null;
 
@@ -23,55 +21,89 @@ function SuccessModal({
 
                 <div className="success-icon">
 
-                    <CheckCircle2 size={70} />
+                    <CheckCircle2 size={65} />
 
                 </div>
 
-                <h2>
-
-                    Repository Scanned Successfully
-
-                </h2>
+                <h2>Scan Started Successfully</h2>
 
                 <p>
 
-                    PatchForge AI completed the security analysis.
+                    PatchForge AI has accepted your repository.
 
                 </p>
 
-                <div className="success-stats">
+                <div className="success-info">
 
-                    <div className="stat">
+                    <div className="info-row">
 
-                        <h3>{dependencies}</h3>
+                        <GitBranch size={18} />
 
-                        <span>Dependencies</span>
+                        <span>{repository}</span>
 
                     </div>
 
-                    <div className="stat">
+                    <div className="info-row">
 
-                        <h3>{vulnerabilities}</h3>
+                        <strong>Scan ID</strong>
 
-                        <span>Vulnerabilities</span>
+                        <span>{scanId}</span>
+
+                    </div>
+
+                    <div className="info-row">
+
+                        <strong>Status</strong>
+
+                        <span className="running">
+
+                            Running...
+
+                        </span>
+
+                    </div>
+
+                    <div className="info-row">
+
+                        <strong>Estimated Time</strong>
+
+                        <span>20 - 60 Seconds</span>
 
                     </div>
 
                 </div>
 
-                <button
+                <div className="modal-buttons">
 
-                    className="report-btn"
+                    <button
 
-                    onClick={onViewReport}
+                        className="report-btn"
 
-                >
+                        onClick={() =>
+                            navigate(`/report/${scanId}`)
+                        }
 
-                    <ShieldCheck size={18} />
+                    >
 
-                    View Security Report
+                        View Report
 
-                </button>
+                        <ArrowRight size={18} />
+
+                    </button>
+
+                    <button
+
+                        className="close-btn"
+
+                        onClick={onClose}
+
+                    >
+
+                        Close
+
+                    </button>
+
+                </div>
 
             </div>
 

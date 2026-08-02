@@ -1,66 +1,128 @@
+/* ==========================================================
+   PATCHFORGE AI - PREMIUM REPOSITORY INPUT
+========================================================== */
+
 .repo-input-container{
 
-    display:flex;
-
-    justify-content:center;
-
-    margin-top:40px;
+    width:100%;
 
 }
 
 .repo-card{
 
-    width:100%;
+    position:relative;
 
-    max-width:900px;
+    overflow:hidden;
 
-    background:#101827;
+    padding:38px;
+
+    border-radius:24px;
+
+    background:
+        linear-gradient(145deg,#0f172a,#111827);
 
     border:1px solid rgba(255,255,255,.08);
 
-    border-radius:20px;
-
-    padding:35px;
+    box-shadow:
+        0 18px 50px rgba(0,0,0,.35);
 
 }
 
-.repo-title{
+.repo-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-120px;
+    right:-120px;
+
+    width:260px;
+    height:260px;
+
+    border-radius:50%;
+
+    background:radial-gradient(
+        rgba(37,99,235,.18),
+        transparent 70%
+    );
+
+    pointer-events:none;
+
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.repo-header{
 
     display:flex;
 
-    gap:15px;
-
     align-items:center;
 
-    color:white;
+    gap:18px;
 
-    margin-bottom:30px;
-
-}
-
-.repo-title svg{
-
-    color:#38bdf8;
+    margin-bottom:32px;
 
 }
 
-.repo-title h2{
+.repo-icon{
+
+    width:68px;
+    height:68px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:18px;
+
+    color:#fff;
+
+    background:linear-gradient(
+        135deg,
+        #2563eb,
+        #06b6d4
+    );
+
+    box-shadow:
+        0 12px 30px rgba(37,99,235,.35);
+
+}
+
+.repo-header h2{
+
+    color:#fff;
+
+    font-size:28px;
+
+    font-weight:700;
 
     margin-bottom:6px;
 
 }
 
-.repo-title p{
+.repo-header p{
 
     color:#94a3b8;
 
+    font-size:15px;
+
 }
+
+/* ==========================================================
+   INPUT
+========================================================== */
 
 .repo-form{
 
     display:flex;
 
-    gap:18px;
+    gap:16px;
+
+    align-items:center;
 
 }
 
@@ -68,37 +130,134 @@
 
     flex:1;
 
-    padding:16px 18px;
+    height:60px;
 
-    border:none;
+    padding:0 22px;
 
-    outline:none;
+    border-radius:16px;
 
-    border-radius:14px;
+    border:1px solid rgba(255,255,255,.08);
 
-    background:#1f2937;
+    background:#0b1220;
 
-    color:white;
+    color:#fff;
 
     font-size:15px;
 
+    transition:.35s;
+
 }
+
+.repo-form input::placeholder{
+
+    color:#6b7280;
+
+}
+
+.repo-form input:focus{
+
+    outline:none;
+
+    border-color:#3b82f6;
+
+    box-shadow:
+        0 0 0 4px rgba(59,130,246,.15);
+
+}
+
+/* ==========================================================
+   BUTTON
+========================================================== */
 
 .repo-form button{
 
+    min-width:220px;
+
+    height:60px;
+
     border:none;
 
-    padding:0 30px;
+    border-radius:16px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:12px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    color:#fff;
+
+    background:linear-gradient(
+        135deg,
+        #2563eb,
+        #7c3aed
+    );
+
+    transition:.35s;
+
+    box-shadow:
+        0 12px 30px rgba(37,99,235,.35);
+
+}
+
+.repo-form button:hover:not(:disabled){
+
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 20px 40px rgba(37,99,235,.45);
+
+}
+
+.repo-form button:disabled{
+
+    opacity:.75;
+
+    cursor:not-allowed;
+
+}
+
+/* ==========================================================
+   ERROR
+========================================================== */
+
+.repo-error{
+
+    margin-top:18px;
+
+    padding:14px 18px;
 
     border-radius:14px;
 
-    background:linear-gradient(135deg,#2563eb,#06b6d4);
+    background:rgba(239,68,68,.12);
 
-    color:white;
+    border:1px solid rgba(239,68,68,.25);
 
-    font-weight:600;
+    color:#f87171;
 
-    cursor:pointer;
+    font-size:14px;
+
+}
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.repo-footer{
+
+    margin-top:28px;
+
+    padding-top:22px;
+
+    border-top:1px solid rgba(255,255,255,.06);
 
     display:flex;
 
@@ -106,31 +265,21 @@
 
     gap:10px;
 
-    transition:.3s;
+    color:#94a3b8;
+
+    font-size:14px;
 
 }
 
-.repo-form button:hover{
+.repo-footer svg{
 
-    transform:translateY(-2px);
-
-}
-
-.repo-form button:disabled{
-
-    opacity:.7;
-
-    cursor:not-allowed;
+    color:#38bdf8;
 
 }
 
-.repo-error{
-
-    color:#ef4444;
-
-    margin-top:18px;
-
-}
+/* ==========================================================
+   SPINNER
+========================================================== */
 
 .spin{
 
@@ -140,34 +289,56 @@
 
 @keyframes spin{
 
-from{
+    to{
 
-transform:rotate(0deg);
+        transform:rotate(360deg);
 
-}
-
-to{
-
-transform:rotate(360deg);
+    }
 
 }
 
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width:900px){
+
+    .repo-form{
+
+        flex-direction:column;
+
+    }
+
+    .repo-form button{
+
+        width:100%;
+
+        min-width:100%;
+
+    }
+
 }
 
-@media(max-width:768px){
+@media(max-width:600px){
 
-.repo-form{
+    .repo-card{
 
-flex-direction:column;
+        padding:26px;
 
-}
+    }
 
-.repo-form button{
+    .repo-header{
 
-height:55px;
+        flex-direction:column;
 
-justify-content:center;
+        text-align:center;
 
-}
+    }
+
+    .repo-header h2{
+
+        font-size:22px;
+
+    }
 
 }

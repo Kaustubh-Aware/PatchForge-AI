@@ -1,206 +1,205 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { GitBranch, Loader2, Search } from "lucide-react";
+import {
+  GitBranch,
+  Loader2,
+  Search,
+  Sparkles,
+} from "lucide-react";
 
 import "./RepoInput.css";
 
-import { createScan } from "../services/scanService";
+function RepoInput({
 
-function RepoInput({ onScanCompleted }) {
+  onScan,
 
-    const navigate = useNavigate();
+  loading = false,
 
-    const [repositoryUrl, setRepositoryUrl] = useState("");
+}) {
 
-    const [loading, setLoading] = useState(false);
+  const [repositoryUrl, setRepositoryUrl] = useState("");
 
-    const [error, setError] = useState("");
+  const [error, setError] = useState("");
 
-    // ============================================
-    // Validate GitHub URL
-    // ============================================
+  // ===========================================
+  // Validate GitHub Repository URL
+  // ===========================================
 
-    const validateGithubURL = (url) => {
+  const validateRepository = (url) => {
 
-        const regex = /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/?$/;
+    const githubRegex =
+      /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/?$/;
 
-        return regex.test(url);
+    return githubRegex.test(url);
 
-    };
+  };
 
-    // ============================================
-    // Scan Repository
-    // ============================================
+  // ===========================================
+  // Handle Scan
+  // ===========================================
 
-    const handleScan = async () => {
+  const handleScan = () => {
 
-        setError("");
+    setError("");
 
-        if (!repositoryUrl.trim()) {
+    if (!repositoryUrl.trim()) {
 
-            setError("Repository URL is required.");
+      setError("Please enter a GitHub repository URL.");
 
-            return;
+      return;
 
-        }
+    }
 
-        if (!validateGithubURL(repositoryUrl)) {
+    if (!validateRepository(repositoryUrl)) {
 
-            setError("Please enter a valid GitHub repository URL.");
+      setError(
 
-            return;
+        "Enter a valid public GitHub repository."
 
-        }
+      );
 
-        try {
+      return;
 
-            setLoading(true);
+    }
 
-            const result = await createScan(repositoryUrl);
+    if (onScan) {
 
-            if (result.success) {
+      onScan(repositoryUrl);
 
-                if (onScanCompleted) {
+    }
 
-                    onScanCompleted(result.data);
+  };
 
-                }
+  return (
 
-                // Redirect to dashboard after scan
+    <section className="repo-input-container">
 
-                navigate("/dashboard");
+      <div className="repo-card">
+
+        {/* Header */}
+
+        <div className="repo-header">
+
+          <div className="repo-icon">
+
+            <GitBranch size={34} />
+
+          </div>
+
+          <div>
+
+            <h2>
+
+              GitHub Repository Scanner
+
+            </h2>
+
+            <p>
+
+              AI-powered dependency & vulnerability analysis
+
+            </p>
+
+          </div>
+
+        </div>
+
+        {/* Input */}
+
+        <div className="repo-form">
+
+          <input
+
+            type="text"
+
+            placeholder="https://github.com/facebook/react"
+
+            value={repositoryUrl}
+
+            onChange={(e) =>
+
+              setRepositoryUrl(e.target.value)
 
             }
 
-            else {
+            disabled={loading}
 
-                setError(result.message);
+          />
+
+          <button
+
+            onClick={handleScan}
+
+            disabled={loading}
+
+          >
+
+            {
+
+              loading ?
+
+              <>
+
+                <Loader2
+
+                  className="spin"
+
+                  size={18}
+
+                />
+
+                Scanning...
+
+              </>
+
+              :
+
+              <>
+
+                <Search size={18} />
+
+                Scan Repository
+
+              </>
 
             }
 
-        }
+          </button>
 
-        catch (err) {
+        </div>
 
-            setError(
+        {/* Error */}
 
-                err.message ||
+        {
 
-                "Repository scan failed."
+          error &&
 
-            );
+          <div className="repo-error">
 
-        }
+            {error}
 
-        finally {
-
-            setLoading(false);
+          </div>
 
         }
 
-    };
+        {/* Footer */}
 
-    return (
+        <div className="repo-footer">
 
-        <section className="repo-input-container">
+          <Sparkles size={16} />
 
-            <div className="repo-card">
+          <span>
 
-                <div className="repo-title">
+            Powered by PatchForge AI • OSV • Lyzr AI
 
-                    <GitBranch size={28} />
+          </span>
 
-                    <div>
+        </div>
 
-                        <h2>Scan GitHub Repository</h2>
+      </div>
 
-                        <p>
+    </section>
 
-                            Enter a public GitHub repository URL.
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div className="repo-form">
-
-                    <input
-
-                        type="text"
-
-                        placeholder="https://github.com/owner/repository"
-
-                        value={repositoryUrl}
-
-                        onChange={(e) =>
-
-                            setRepositoryUrl(e.target.value)
-
-                        }
-
-                    />
-
-                    <button
-
-                        onClick={handleScan}
-
-                        disabled={loading}
-
-                    >
-
-                        {
-
-                            loading ?
-
-                            <>
-
-                                <Loader2
-
-                                    className="spin"
-
-                                    size={18}
-
-                                />
-
-                                Scanning...
-
-                            </>
-
-                            :
-
-                            <>
-
-                                <Search size={18} />
-
-                                Scan Repository
-
-                            </>
-
-                        }
-
-                    </button>
-
-                </div>
-
-                {
-
-                    error &&
-
-                    <p className="repo-error">
-
-                        {error}
-
-                    </p>
-
-                }
-
-            </div>
-
-        </section>
-
-    );
+  );
 
 }
 
