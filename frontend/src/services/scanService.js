@@ -84,7 +84,7 @@ export const getVulnerabilities = async (scanId) => {
 };
 
 /**
- * Download Report
+ * Get Report
  * GET /api/report/:scanId
  */
 export const getReport = async (scanId) => {
@@ -103,19 +103,19 @@ export const getReport = async (scanId) => {
 };
 
 /**
- * Delete Scan
- * DELETE /api/scan/:scanId
+ * Get Dashboard Stats
+ * GET /api/stats
  */
-export const deleteScan = async (scanId) => {
+export const getStats = async () => {
   try {
-    const { data } = await api.delete(`/scan/${scanId}`);
+    const { data } = await api.get("/stats");
 
     return data;
   } catch (error) {
     throw (
       error.response?.data || {
         success: false,
-        message: "Unable to delete scan.",
+        message: "Unable to fetch stats.",
       }
     );
   }

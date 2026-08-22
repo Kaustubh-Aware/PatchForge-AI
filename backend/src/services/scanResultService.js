@@ -1,129 +1,154 @@
-const Scan = require("../models/Scan");
-const Vulnerability = require("../models/Vulnerability");
+const store = require("../store/store");
+const {
+    normalizeSeverity,
+    calculateSeverityCounts,
+    calculateSecurityScore,
+} = require("../utils/severityCalculator");
 
 // ======================================================
 // Save Scan Results
 // ======================================================
 
-const saveScanResults = async (
-    scanId,
-    repositoryUrl,
-    scanReport
-) => {
-
+const saveScanResults = async (scanId, repositoryUrl, scanReport) => {
     try {
-
         console.log("\n========== SAVING SCAN REPORT ==========");
-        console.log(JSON.stringify(scanReport, null, 2));
+
+        // Collect all normalized vulnerabilities for counting
+        const allVulns = [];
 
         // ---------------------------------------
         // Save Vulnerabilities
         // ---------------------------------------
 
-        for (const pkg of scanReport.vulnerablePackages) {
+        const vulnerablePackages = scanReport.vulnerablePackages || [];
 
-            for (const vuln of pkg.vulnerabilities) {
+        for (const pkg of vulnerablePackages) {
+            const vulns = pkg.vulnerabilities || [];
 
-                await Vulnerability.create({
+            for (const vuln of vulns) {
+                const severity = normalizeSeverity(
+                    vuln?.database_specific?.severity ||
+                    vuln?.severity ||
+                    "UNKNOWN"
+                );
 
+                // Extract CVSS score safely
+                let cvssScore = 0;
+                if (vuln?.database_specific?.cvssScore) {
+                    cvssScore = vuln.database_specific.cvssScore;
+                } else if (vuln?.severity_score) {
+                    cvssScore = vuln.severity_score;
+                } else if (vuln?.database_specific?.cvss?.score) {
+                    cvssScore = vuln.database_specific.cvss.score;
+                }
+
+                // Extract fixed version safely
+                let fixedVersion = "";
+                if (vuln?.fixed_version) {
+                    fixedVersion = vuln.fixed_version;
+                } else if (vuln?.affected) {
+                    for (const affected of vuln.affected) {
+                        const ranges = affected?.ranges || [];
+                        for (const range of ranges) {
+                            const events = range?.events || [];
+                            for (const event of events) {
+                                if (event?.fixed) {
+                                    fixedVersion = event.fixed;
+                                    break;
+                                }
+                            }
+                            if (fixedVersion) break;
+                        }
+                        if (fixedVersion) break;
+                    }
+                }
+
+                const vulnData = {
                     scanId,
-
-                    packageName: pkg.packageName,
-
-                    installedVersion: pkg.version,
-
+                    packageName: pkg.packageName || pkg.name || "unknown",
+                    installedVersion: pkg.version || pkg.installedVersion || "unknown",
                     ecosystem: "npm",
+                    vulnerabilityId: vuln.id || vuln.vulnerabilityId || "UNKNOWN",
+                    summary: vuln.summary || vuln.details || "",
+                    severity,
+                    cvssScore,
+                    fixedVersion,
+                    references: vuln.references
+                        ? vuln.references.map((ref) => ref.url || ref).filter(Boolean)
+                        : [],
+                };
 
-                    vulnerabilityId: vuln.id,
-
-                    summary: vuln.summary || "",
-
-                    severity:
-                        vuln.database_specific?.severity ||
-                        "UNKNOWN",
-
-                    cvssScore:
-                        vuln.database_specific?.cvssScore ||
-                        0,
-
-                    fixedVersion:
-                        vuln.fixed_version || "",
-
-                    references:
-                        vuln.references
-                            ? vuln.references.map(
-                                  ref => ref.url
-                              )
-                            : []
-
-                });
-
+                store.createVulnerability(vulnData);
+                allVulns.push(vulnData);
             }
-
         }
 
-        console.log("\nUpdating Scan document with:");
-        console.log({
-            totalDependencies: scanReport.totalDependencies,
-            vulnerabilitiesFound: scanReport.vulnerabilitiesFound
-        });
+        // ---------------------------------------
+        // Calculate Severity Counts & Score
+        // ---------------------------------------
+
+        const severityCounts = calculateSeverityCounts(allVulns);
+        const securityScore = calculateSecurityScore(severityCounts);
+
+        console.log("\nSeverity Counts:", severityCounts);
+        console.log("Security Score:", securityScore);
+
+        // ---------------------------------------
+        // Process AI Analysis safely
+        // ---------------------------------------
+
+        let aiAnalysis = null;
+
+        if (scanReport.aiAnalysis) {
+            // Handle various formats the Lyzr API might return
+            if (typeof scanReport.aiAnalysis === "string") {
+                aiAnalysis = scanReport.aiAnalysis;
+            } else if (scanReport.aiAnalysis?.response) {
+                aiAnalysis = scanReport.aiAnalysis.response;
+            } else if (scanReport.aiAnalysis?.message) {
+                aiAnalysis = scanReport.aiAnalysis.message;
+            } else {
+                aiAnalysis = scanReport.aiAnalysis;
+            }
+        }
 
         // ---------------------------------------
         // Update Scan Document
         // ---------------------------------------
 
-        await Scan.findOneAndUpdate(
+        const totalVulns = allVulns.length;
 
-            { scanId },
-
-            {
-
+        store.updateScan(scanId, {
             repositoryUrl,
             status: "Completed",
-            totalDependencies: scanReport.totalDependencies,
-            vulnerabilitiesFound: scanReport.vulnerabilitiesFound,
+            totalDependencies: scanReport.totalDependencies || 0,
+            vulnerabilitiesFound: totalVulns,
+            severityCounts,
+            securityScore,
+            aiAnalysis: aiAnalysis || "AI analysis not available for this scan.",
+            completedAt: new Date(),
+        });
 
-                aiAnalysis:
-                    scanReport.aiAnalysis?.response ||
-                    scanReport.aiAnalysis ||
-                    "AI analysis not available"
-
-            }
-
-        );
-
-        const updated = await Scan.findOne({ scanId });
+        const updated = store.findScan(scanId);
 
         console.log("\n========== UPDATED SCAN ==========");
-        console.log(updated);
+        console.log(`Scan ID: ${updated?.scanId}`);
+        console.log(`Status: ${updated?.status}`);
+        console.log(`Dependencies: ${updated?.totalDependencies}`);
+        console.log(`Vulnerabilities: ${updated?.vulnerabilitiesFound}`);
 
-        return {
-
-            success: true
-
-        };
+        return { success: true };
 
     } catch (error) {
-
-        console.error(
-            "Scan Result Service Error:",
-            error
-        );
+        console.error("Scan Result Service Error:", error.message);
 
         return {
-
             success: false,
-
-            message: error.message
-
+            message: error.message || "Failed to save scan results.",
         };
-
     }
-
 };
 
 module.exports = {
-
-    saveScanResults
-
+    saveScanResults,
 };

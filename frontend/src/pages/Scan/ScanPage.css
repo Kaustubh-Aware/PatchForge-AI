@@ -252,6 +252,48 @@
 }
 
 /* =======================================================
+   SCAN ERROR
+======================================================= */
+
+.scan-error{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:20px 24px;
+  border-radius:var(--radius-md);
+  background:rgba(239,68,68,.1);
+  border:1px solid rgba(239,68,68,.25);
+  color:#fca5a5;
+}
+
+.scan-error strong{
+  display:block;
+  color:#fca5a5;
+  margin-bottom:4px;
+}
+
+.scan-error p{
+  color:#fca5a5;
+  font-size:0.9rem;
+  opacity:0.85;
+}
+
+.scan-error button{
+  margin-left:auto;
+  padding:8px 18px;
+  border-radius:8px;
+  background:rgba(239,68,68,.2);
+  color:#fca5a5;
+  font-size:0.85rem;
+  transition:0.3s;
+  white-space:nowrap;
+}
+
+.scan-error button:hover{
+  background:rgba(239,68,68,.35);
+}
+
+/* =======================================================
    RESPONSIVE
 ======================================================= */
 

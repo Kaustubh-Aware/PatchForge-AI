@@ -1,4 +1,5 @@
 import "./DashboardHero.css";
+import { useNavigate } from "react-router-dom";
 
 import {
   ShieldCheck,
@@ -14,6 +15,8 @@ import {
 } from "lucide-react";
 
 function DashboardHero() {
+  const navigate = useNavigate();
+
   return (
     <section className="hero">
 
@@ -49,12 +52,25 @@ function DashboardHero() {
 
         <div className="hero-buttons">
 
-          <button className="primary-btn">
+          <button
+            className="primary-btn"
+            onClick={() => navigate("/scan")}
+          >
             Start AI Scan
             <ArrowRight size={18} />
           </button>
 
-          <button className="secondary-btn">
+          <button
+            className="secondary-btn"
+            onClick={() => {
+              const history = document.querySelector(".scan-history");
+              if (history) {
+                history.scrollIntoView({ behavior: "smooth" });
+              } else {
+                navigate("/scan");
+              }
+            }}
+          >
             View Reports
           </button>
 

@@ -1,4 +1,4 @@
 {
   "success": false,
-  "message": "Request failed with status code 400"
+  "message": "timeout of 8000ms exceeded"
 }

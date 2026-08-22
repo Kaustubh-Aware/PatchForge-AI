@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   GitBranch,
   Loader2,
@@ -8,13 +7,9 @@ import {
 } from "lucide-react";
 
 import "./RepoInput.css";
-import { createScan } from "../services/scanService";
 
-function RepoInput() {
-  const navigate = useNavigate();
-
+function RepoInput({ onScan, loading }) {
   const [repositoryUrl, setRepositoryUrl] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const validateRepository = (url) => {
@@ -23,7 +18,7 @@ function RepoInput() {
     return githubRegex.test(url);
   };
 
-  const handleScan = async () => {
+  const handleScan = () => {
     setError("");
 
     if (!repositoryUrl.trim()) {
@@ -31,26 +26,20 @@ function RepoInput() {
       return;
     }
 
-    if (!validateRepository(repositoryUrl)) {
-      setError("Enter a valid public GitHub repository.");
+    if (!validateRepository(repositoryUrl.trim())) {
+      setError("Enter a valid public GitHub repository URL. Example: https://github.com/owner/repo");
       return;
     }
 
-    try {
-      setLoading(true);
+    // Call parent's scan handler — no duplicate API calls
+    if (onScan) {
+      onScan(repositoryUrl.trim());
+    }
+  };
 
-      const response = await createScan(repositoryUrl);
-
-      if (response.success) {
-        navigate(`/report/${response.data.scanId}`);
-      } else {
-        setError(response.message || "Scan failed.");
-      }
-    } catch (err) {
-      console.error(err);
-      setError(err.message || "Repository scan failed.");
-    } finally {
-      setLoading(false);
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !loading) {
+      handleScan();
     }
   };
 
@@ -81,6 +70,7 @@ function RepoInput() {
             placeholder="https://github.com/facebook/react"
             value={repositoryUrl}
             onChange={(e) => setRepositoryUrl(e.target.value)}
+            onKeyDown={handleKeyDown}
             disabled={loading}
           />
 

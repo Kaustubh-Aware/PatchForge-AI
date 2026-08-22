@@ -14,7 +14,7 @@ const BASE_URL =
 
 const api = axios.create({
   baseURL: BASE_URL,
-  timeout: 60000,
+  timeout: 120000, // 2 minutes for long scan operations
   headers: {
     "Content-Type": "application/json",
   },
@@ -49,12 +49,12 @@ api.interceptors.response.use(
       console.error(
         "API Error:",
         error.response.status,
-        error.response.data
+        error.response.data?.message || error.response.data
       );
     } else if (error.request) {
       console.error("Backend server is not responding.");
     } else {
-      console.error(error.message);
+      console.error("Request Error:", error.message);
     }
 
     return Promise.reject(error);

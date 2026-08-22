@@ -6,53 +6,78 @@ import {
   ShieldCheck,
   AlertTriangle,
   Boxes,
-  BrainCircuit,
+  BarChart3,
   TrendingUp,
   TrendingDown,
 } from "lucide-react";
 
-const cards = [
-  {
-    title: "Security Score",
-    value: 98,
-    suffix: "%",
-    icon: ShieldCheck,
-    gradient: "blue",
-    trend: "+2.1%",
-    trendUp: true,
-    subtitle: "Excellent Security",
-  },
-  {
-    title: "Vulnerabilities",
-    value: 3,
-    icon: AlertTriangle,
-    gradient: "red",
-    trend: "-12%",
-    trendUp: false,
-    subtitle: "Low Risk",
-  },
-  {
-    title: "Dependencies",
-    value: 214,
-    icon: Boxes,
-    gradient: "cyan",
-    trend: "+18",
-    trendUp: true,
-    subtitle: "Healthy Packages",
-  },
-  {
-    title: "AI Confidence",
-    value: 99.3,
-    suffix: "%",
-    icon: BrainCircuit,
-    gradient: "purple",
-    trend: "+0.6%",
-    trendUp: true,
-    subtitle: "Prediction Accuracy",
-  },
-];
+function StatsCards({ scans = [], loading = false }) {
 
-function StatsCards() {
+  // Compute real stats from scan data
+  const completedScans = scans.filter((s) => s.status === "Completed");
+
+  const totalScans = scans.length;
+
+  const totalDependencies = completedScans.reduce(
+    (sum, s) => sum + (s.totalDependencies || 0), 0
+  );
+
+  const totalVulnerabilities = completedScans.reduce(
+    (sum, s) => sum + (s.vulnerabilitiesFound || 0), 0
+  );
+
+  let avgScore = 100;
+  if (completedScans.length > 0) {
+    const total = completedScans.reduce(
+      (sum, s) => sum + (s.securityScore ?? 100), 0
+    );
+    avgScore = Math.round(total / completedScans.length);
+  }
+
+  const cards = [
+    {
+      title: "Security Score",
+      value: avgScore,
+      suffix: "%",
+      icon: ShieldCheck,
+      gradient: "blue",
+      subtitle: avgScore >= 90 ? "Excellent" : avgScore >= 75 ? "Good" : avgScore >= 50 ? "Fair" : "Needs Attention",
+    },
+    {
+      title: "Vulnerabilities",
+      value: totalVulnerabilities,
+      icon: AlertTriangle,
+      gradient: "red",
+      subtitle: totalVulnerabilities === 0 ? "No Threats" : `${totalVulnerabilities} Found`,
+    },
+    {
+      title: "Dependencies",
+      value: totalDependencies,
+      icon: Boxes,
+      gradient: "cyan",
+      subtitle: "Analyzed Packages",
+    },
+    {
+      title: "Total Scans",
+      value: totalScans,
+      icon: BarChart3,
+      gradient: "purple",
+      subtitle: `${completedScans.length} Completed`,
+    },
+  ];
+
+  if (loading) {
+    return (
+      <section className="stats-grid">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="stat-card loading-card">
+            <div className="stat-skeleton" />
+          </div>
+        ))}
+      </section>
+    );
+  }
+
   return (
     <section className="stats-grid">
 
@@ -63,57 +88,29 @@ function StatsCards() {
         return (
 
           <div
-            className={`stat-card ${card.gradient} ${
-            card.title==="AI Confidence"
-            ? "ai-card"
-            : ""
-            }`}
+            key={card.title}
+            className={`stat-card ${card.gradient}`}
           >
             <span
-className="floating-dot"
-style={{
-left:"20%",
-animationDelay:"0s"
-}}
-></span>
+              className="floating-dot"
+              style={{ left: "20%", animationDelay: "0s" }}
+            ></span>
 
-<span
-className="floating-dot"
-style={{
-left:"72%",
-animationDelay:"2s"
-}}
-></span>
+            <span
+              className="floating-dot"
+              style={{ left: "72%", animationDelay: "2s" }}
+            ></span>
 
-<span
-className="floating-dot"
-style={{
-left:"48%",
-animationDelay:"4s"
-}}
-></span>
+            <span
+              className="floating-dot"
+              style={{ left: "48%", animationDelay: "4s" }}
+            ></span>
+
             <div className="stat-top">
 
               <div className="stat-icon">
-
                 <div className="icon-ring"></div>
-
                 <Icon size={24} />
-
-            </div>
-
-              <div
-                className={`stat-trend ${
-                  card.trendUp ? "positive" : "negative"
-                }`}
-              >
-                {card.trendUp ? (
-                  <TrendingUp size={15} />
-                ) : (
-                  <TrendingDown size={15} />
-                )}
-
-                {card.trend}
               </div>
 
             </div>

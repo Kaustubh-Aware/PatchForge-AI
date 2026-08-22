@@ -1,9 +1,27 @@
 const axios = require("axios");
-const fs = require("fs");
+
+// ======================================================
+// Analyze Vulnerabilities using Lyzr AI
+// ======================================================
 
 const analyzeVulnerabilities = async (vulnerablePackages) => {
-
     try {
+        // Skip if no vulnerable packages
+        if (!vulnerablePackages || vulnerablePackages.length === 0) {
+            return {
+                success: true,
+                analysis: "No vulnerabilities detected. The repository appears to be secure.",
+            };
+        }
+
+        // Check if Lyzr config exists
+        if (!process.env.LYZR_API_URL || !process.env.LYZR_AGENT_ID || !process.env.LYZR_API_KEY) {
+            console.log("⚠ Lyzr AI not configured. Skipping AI analysis.");
+            return {
+                success: false,
+                message: "AI service is not configured.",
+            };
+        }
 
         const prompt = `
 You are PatchForge AI Security Assistant.
@@ -22,10 +40,10 @@ Return:
 `;
 
         const body = {
-            user_id: "rohandave1102@gmail.com",
+            user_id: "patchforge@patchforge.ai",
             agent_id: process.env.LYZR_AGENT_ID,
-            session_id: "6a6f077197956da4271a0556-n753pzyl",
-            message: prompt
+            session_id: `${process.env.LYZR_AGENT_ID}-patchforge`,
+            message: prompt,
         };
 
         const response = await axios.post(
@@ -34,43 +52,47 @@ Return:
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "x-api-key": process.env.LYZR_API_KEY
-                }
+                    "x-api-key": process.env.LYZR_API_KEY,
+                },
+                timeout: 8000, // 8 second timeout
             }
         );
 
-        fs.writeFileSync(
-            "./lyzr-success.json",
-            JSON.stringify(response.data, null, 2)
-        );
+        // Safely extract analysis
+        const analysis = response?.data?.response ||
+                         response?.data?.message ||
+                         response?.data ||
+                         null;
+
+        if (!analysis) {
+            return {
+                success: false,
+                message: "AI service returned empty response.",
+            };
+        }
+
+        console.log("✅ Lyzr AI Analysis completed successfully");
 
         return {
             success: true,
-            analysis: response.data
+            analysis,
         };
 
     } catch (error) {
+        console.log("⚠ Lyzr AI Analysis failed:", error?.message || "Unknown error");
 
-        const errorData = {
-            message: error.message,
-            status: error.response?.status,
-            data: error.response?.data
-        };
-
-        fs.writeFileSync(
-            "./lyzr-error.json",
-            JSON.stringify(errorData, null, 2)
-        );
+        // Log detailed error for debugging but don't crash
+        if (error?.response) {
+            console.log("   Status:", error.response.status);
+        }
 
         return {
             success: false,
-            message: error.message
+            message: error?.message || "AI analysis service is temporarily unavailable.",
         };
-
     }
-
 };
 
 module.exports = {
-    analyzeVulnerabilities
+    analyzeVulnerabilities,
 };

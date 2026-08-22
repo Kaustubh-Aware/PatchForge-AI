@@ -1,160 +1,168 @@
-const Scan = require("../models/Scan");
-
+const store = require("../store/store");
 const validateGitHubRepository = require("../utils/validateRepository");
 const generateScanId = require("../utils/generateScanId");
-
 const { scanRepository } = require("../services/githubService");
 const { saveScanResults } = require("../services/scanResultService");
 
 // ======================================================
 // Create Scan
+// POST /api/scan
 // ======================================================
 
 const createScan = async (req, res) => {
     try {
         const { repositoryUrl } = req.body;
 
+        // Validate input
         if (!repositoryUrl) {
             return res.status(400).json({
                 success: false,
-                message: "Repository URL is required."
+                message: "Repository URL is required.",
             });
         }
 
-        if (!validateGitHubRepository(repositoryUrl)) {
+        if (typeof repositoryUrl !== "string") {
             return res.status(400).json({
                 success: false,
-                message: "Invalid GitHub Repository URL."
+                message: "Repository URL must be a string.",
             });
         }
 
-        const scan = await Scan.create({
-            scanId: generateScanId(),
-            repositoryUrl,
+        const trimmedUrl = repositoryUrl.trim();
+
+        if (!validateGitHubRepository(trimmedUrl)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid GitHub Repository URL. Expected format: https://github.com/owner/repo",
+            });
+        }
+
+        // Create scan record
+        const scanId = generateScanId();
+
+        const scan = store.createScan({
+            scanId,
+            repositoryUrl: trimmedUrl,
             status: "Scanning",
             totalDependencies: 0,
-            vulnerabilitiesFound: 0
+            vulnerabilitiesFound: 0,
         });
 
         console.log("\n==================================");
         console.log("========== START SCAN ==========");
         console.log("==================================");
+        console.log(`Scan ID: ${scanId}`);
+        console.log(`Repository: ${trimmedUrl}`);
 
+        // Run the scan
         console.log("1. Cloning repository...");
 
-        const scanResult = await scanRepository(repositoryUrl);
+        const scanResult = await scanRepository(trimmedUrl);
 
         console.log("\n========== GITHUB SERVICE RESULT ==========");
-        console.log(JSON.stringify(scanResult, null, 2));
+        console.log(`Success: ${scanResult.success}`);
 
         if (!scanResult.success) {
-            await Scan.findOneAndUpdate(
-                { scanId: scan.scanId },
-                { status: "Failed" }
-            );
+            store.updateScan(scanId, { status: "Failed" });
 
             return res.status(500).json({
                 success: false,
-                message: scanResult.message
+                message: scanResult.message || "Repository scan failed.",
             });
         }
 
-        console.log("3. Saving scan...");
-
-        console.log("\n========== OSV REPORT ==========");
-        console.log(JSON.stringify({
-            totalDependencies: scanResult.totalDependencies,
-            vulnerabilitiesFound: scanResult.vulnerabilitiesFound,
-            vulnerablePackages: scanResult.vulnerablePackages
-        }, null, 2));
+        // Save results
+        console.log("3. Saving scan results...");
 
         const saveResult = await saveScanResults(
-            scan.scanId,
-            repositoryUrl,
+            scanId,
+            trimmedUrl,
             scanResult
         );
 
         if (!saveResult.success) {
+            store.updateScan(scanId, { status: "Failed" });
+
             return res.status(500).json({
                 success: false,
-                message: saveResult.message
+                message: saveResult.message || "Failed to save scan results.",
             });
         }
 
-        const updatedScan = await Scan.findOne({
-            scanId: scan.scanId
-        });
+        // Get the updated scan
+        const updatedScan = store.findScan(scanId);
 
         console.log("==================================");
         console.log("SCAN COMPLETED");
+        console.log(`Dependencies: ${updatedScan?.totalDependencies}`);
+        console.log(`Vulnerabilities: ${updatedScan?.vulnerabilitiesFound}`);
+        console.log(`Security Score: ${updatedScan?.securityScore}`);
         console.log("==================================");
 
         return res.status(201).json({
             success: true,
             message: "Repository scanned successfully.",
-            data: updatedScan
+            data: updatedScan,
         });
 
     } catch (error) {
-        console.error(error);
+        console.error("Scan Error:", error.message);
 
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: "An unexpected error occurred during the scan.",
         });
     }
 };
 
 // ======================================================
 // Get All Scans
+// GET /api/scan
 // ======================================================
 
 const getAllScans = async (req, res) => {
     try {
-        const scans = await Scan.find().sort({
-            createdAt: -1
-        });
+        const scans = store.findAllScans();
 
         return res.status(200).json({
             success: true,
             total: scans.length,
-            data: scans
+            data: scans,
         });
 
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: "Failed to retrieve scans.",
         });
     }
 };
 
 // ======================================================
 // Get Scan By Scan ID
+// GET /api/scan/:scanId
 // ======================================================
 
 const getScanById = async (req, res) => {
     try {
-        const scan = await Scan.findOne({
-            scanId: req.params.scanId
-        });
+        const scan = store.findScan(req.params.scanId);
 
         if (!scan) {
             return res.status(404).json({
                 success: false,
-                message: "Scan not found."
+                message: "Scan not found.",
             });
         }
 
-        return res.json({
+        return res.status(200).json({
             success: true,
-            data: scan
+            data: scan,
         });
 
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: "Failed to retrieve scan.",
         });
     }
 };
@@ -162,5 +170,5 @@ const getScanById = async (req, res) => {
 module.exports = {
     createScan,
     getAllScans,
-    getScanById
+    getScanById,
 };
