@@ -73,7 +73,7 @@ function Footer() {
 
             <span>Node.js</span>
 
-            <span>MongoDB</span>
+            <span>Supabase</span>
 
             <span>Lyzr AI</span>
 

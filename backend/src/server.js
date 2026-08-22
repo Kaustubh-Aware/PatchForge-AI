@@ -10,7 +10,7 @@ const startServer = async () => {
             console.log("==================================");
             console.log(`🚀 PatchForge AI Backend Running`);
             console.log(`🌐 http://localhost:${PORT}`);
-            console.log(`📦 Storage: In-Memory`);
+            console.log(`📦 Database: Supabase (PostgreSQL)`);
             console.log(`🔧 Environment: ${process.env.NODE_ENV || "development"}`);
             console.log("==================================");
         });

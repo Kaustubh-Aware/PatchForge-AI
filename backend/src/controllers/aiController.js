@@ -1,4 +1,4 @@
-const store = require("../store/store");
+const { getScanReportByScanId } = require("../services/supabaseService");
 
 // ============================================
 // Get AI Analysis by Scan ID
@@ -9,7 +9,7 @@ const getAIAnalysis = async (req, res) => {
     try {
         const { scanId } = req.params;
 
-        const scan = store.findScan(scanId);
+        const scan = await getScanReportByScanId(scanId);
 
         if (!scan) {
             return res.status(404).json({

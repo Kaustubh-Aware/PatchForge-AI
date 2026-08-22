@@ -1,8 +1,13 @@
-const store = require("../store/store");
 const validateGitHubRepository = require("../utils/validateRepository");
 const generateScanId = require("../utils/generateScanId");
 const { scanRepository } = require("../services/githubService");
 const { saveScanResults } = require("../services/scanResultService");
+const {
+    createScanRecord,
+    getScanReportByScanId,
+    getAllScansFromSupabase,
+    updateScanStatus,
+} = require("../services/supabaseService");
 
 // ======================================================
 // Create Scan
@@ -37,10 +42,10 @@ const createScan = async (req, res) => {
             });
         }
 
-        // Create scan record
+        // Create scan record in Supabase
         const scanId = generateScanId();
 
-        const scan = store.createScan({
+        await createScanRecord({
             scanId,
             repositoryUrl: trimmedUrl,
             status: "Scanning",
@@ -63,7 +68,7 @@ const createScan = async (req, res) => {
         console.log(`Success: ${scanResult.success}`);
 
         if (!scanResult.success) {
-            store.updateScan(scanId, { status: "Failed" });
+            await updateScanStatus(scanId, "Failed");
 
             return res.status(500).json({
                 success: false,
@@ -71,8 +76,8 @@ const createScan = async (req, res) => {
             });
         }
 
-        // Save results
-        console.log("3. Saving scan results...");
+        // Save results to Supabase
+        console.log("3. Saving scan results to Supabase...");
 
         const saveResult = await saveScanResults(
             scanId,
@@ -81,28 +86,28 @@ const createScan = async (req, res) => {
         );
 
         if (!saveResult.success) {
-            store.updateScan(scanId, { status: "Failed" });
+            await updateScanStatus(scanId, "Failed");
 
             return res.status(500).json({
                 success: false,
-                message: saveResult.message || "Failed to save scan results.",
+                message: saveResult.message || "Failed to save scan results to Supabase.",
             });
         }
 
-        // Get the updated scan
-        const updatedScan = store.findScan(scanId);
+        // Fetch the updated scan from Supabase
+        const updatedReport = await getScanReportByScanId(scanId);
 
         console.log("==================================");
         console.log("SCAN COMPLETED");
-        console.log(`Dependencies: ${updatedScan?.totalDependencies}`);
-        console.log(`Vulnerabilities: ${updatedScan?.vulnerabilitiesFound}`);
-        console.log(`Security Score: ${updatedScan?.securityScore}`);
+        console.log(`Dependencies: ${updatedReport?.totalDependencies}`);
+        console.log(`Vulnerabilities: ${updatedReport?.vulnerabilitiesFound}`);
+        console.log(`Security Score: ${updatedReport?.securityScore}`);
         console.log("==================================");
 
         return res.status(201).json({
             success: true,
             message: "Repository scanned successfully.",
-            data: updatedScan,
+            data: updatedReport,
         });
 
     } catch (error) {
@@ -122,7 +127,7 @@ const createScan = async (req, res) => {
 
 const getAllScans = async (req, res) => {
     try {
-        const scans = store.findAllScans();
+        const scans = await getAllScansFromSupabase();
 
         return res.status(200).json({
             success: true,
@@ -145,7 +150,7 @@ const getAllScans = async (req, res) => {
 
 const getScanById = async (req, res) => {
     try {
-        const scan = store.findScan(req.params.scanId);
+        const scan = await getScanReportByScanId(req.params.scanId);
 
         if (!scan) {
             return res.status(404).json({

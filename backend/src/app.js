@@ -8,6 +8,7 @@ const scanRoutes = require("./routes/scanRoutes");
 const vulnerabilityRoutes = require("./routes/vulnerabilityRoutes");
 const aiRoutes = require("./routes/aiRoutes");
 const reportRoutes = require("./routes/reportRoutes");
+const { getStatsFromSupabase } = require("./services/supabaseService");
 
 const app = express();
 
@@ -38,7 +39,7 @@ app.use(morgan("dev"));
 
 const rateLimitMap = new Map();
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
-const RATE_LIMIT_MAX = 30; // max requests per window
+const RATE_LIMIT_MAX = 60; // max requests per window
 
 app.use((req, res, next) => {
     const ip = req.ip || req.connection?.remoteAddress || "unknown";
@@ -89,6 +90,7 @@ app.use((req, res, next) => {
 // ======================================================
 
 app.use("/api/scan", scanRoutes);
+app.use("/api/scans", scanRoutes); // Alias for plural endpoint
 app.use("/api/vulnerabilities", vulnerabilityRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/report", reportRoutes);
@@ -101,6 +103,7 @@ app.get("/", (req, res) => {
     res.status(200).json({
         success: true,
         project: "PatchForge AI",
+        database: "Supabase (PostgreSQL)",
         message: "Backend is running successfully 🚀",
     });
 });
@@ -113,7 +116,7 @@ app.get("/api/health", (req, res) => {
     res.status(200).json({
         success: true,
         status: "Healthy",
-        storage: "In-Memory",
+        storage: "Supabase (PostgreSQL)",
         timestamp: new Date(),
     });
 });
@@ -122,11 +125,9 @@ app.get("/api/health", (req, res) => {
 // Stats Endpoint (for dashboard)
 // ======================================================
 
-const store = require("./store/store");
-
-app.get("/api/stats", (req, res) => {
+app.get("/api/stats", async (req, res) => {
     try {
-        const stats = store.getStats();
+        const stats = await getStatsFromSupabase();
         res.status(200).json({
             success: true,
             data: stats,
@@ -134,7 +135,7 @@ app.get("/api/stats", (req, res) => {
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: "Failed to retrieve stats.",
+            message: "Failed to retrieve stats from Supabase.",
         });
     }
 });

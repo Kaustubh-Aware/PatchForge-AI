@@ -21,6 +21,10 @@ import {
   Loader2,
   BrainCircuit,
   ExternalLink,
+  ShieldAlert,
+  CheckCircle2,
+  Sparkles,
+  ArrowUpRight,
 } from "lucide-react";
 
 import CountUp from "../../components/CountUp/CountUp";
@@ -86,6 +90,122 @@ function SecurityScoreRing({ score = 0 }) {
 }
 
 // ======================================================
+// Structured AI Analysis View
+// ======================================================
+
+function AIAnalysisView({ rawAnalysis }) {
+  if (!rawAnalysis) {
+    return (
+      <div className="ai-unavailable">
+        <BrainCircuit size={32} />
+        <p>AI analysis is currently unavailable for this scan.</p>
+      </div>
+    );
+  }
+
+  let parsed = null;
+  if (typeof rawAnalysis === "object") {
+    parsed = rawAnalysis;
+  } else if (typeof rawAnalysis === "string") {
+    try {
+      parsed = JSON.parse(rawAnalysis);
+    } catch (e) {
+      // Not JSON, render formatted text
+    }
+  }
+
+  if (parsed && typeof parsed === "object") {
+    return (
+      <div className="ai-structured-analysis">
+        {/* Executive Summary */}
+        {parsed.executive_summary && (
+          <div className="ai-block">
+            <h3>
+              <Sparkles size={18} />
+              Executive Summary
+            </h3>
+            <p className="ai-summary-text">{parsed.executive_summary}</p>
+          </div>
+        )}
+
+        {/* Top Risks */}
+        {Array.isArray(parsed.top_risks) && parsed.top_risks.length > 0 && (
+          <div className="ai-block">
+            <h3>
+              <ShieldAlert size={18} />
+              Identified Security Risks
+            </h3>
+            <div className="ai-risks-grid">
+              {parsed.top_risks.map((risk, idx) => (
+                <div key={idx} className="ai-risk-item">
+                  <div className="risk-item-header">
+                    <span className="risk-pkg">{risk.package || "Package"}</span>
+                    {risk.severity && (
+                      <span className={`risk-badge-mini ${(risk.severity || "").toLowerCase()}`}>
+                        {risk.severity}
+                      </span>
+                    )}
+                  </div>
+                  <p>{risk.risk || risk.description || JSON.stringify(risk)}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Remediation Plan */}
+        {Array.isArray(parsed.remediation_plan) && parsed.remediation_plan.length > 0 && (
+          <div className="ai-block">
+            <h3>
+              <CheckCircle2 size={18} />
+              Remediation & Patching Strategy
+            </h3>
+            <div className="ai-remediation-list">
+              {parsed.remediation_plan.map((plan, idx) => (
+                <div key={idx} className="ai-plan-item">
+                  <div className="plan-item-top">
+                    <strong>{plan.package || "Dependency"}</strong>
+                    {plan.fixed_version && (
+                      <span className="fixed-version-tag">
+                        Fix: {plan.fixed_version}
+                      </span>
+                    )}
+                  </div>
+                  <p>{plan.action || plan.reason || JSON.stringify(plan)}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Developer Recommendations */}
+        {Array.isArray(parsed.developer_recommendations) && parsed.developer_recommendations.length > 0 && (
+          <div className="ai-block">
+            <h3>
+              <ShieldCheck size={18} />
+              Developer Recommendations
+            </h3>
+            <ul className="ai-rec-list">
+              {parsed.developer_recommendations.map((rec, idx) => (
+                <li key={idx}>{rec}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="ai-text">
+      {String(rawAnalysis).split("\n").map((line, i) => (
+        <p key={i}>{line || <br />}</p>
+      ))}
+    </div>
+  );
+}
+
+// ======================================================
 // Report Page
 // ======================================================
 
@@ -104,7 +224,7 @@ function ReportPage() {
 
       const response = await getReport(scanId);
 
-      if (response.success) {
+      if (response.success && response.report) {
         setReport(response.report);
       } else {
         setError(response.message || "Failed to load report.");
@@ -203,7 +323,7 @@ function ReportPage() {
           </p>
         </div>
         <div className="report-status">
-          <span className={`status-badge ${report.status?.toLowerCase()}`}>
+          <span className={`status-badge ${(report.status || "completed").toLowerCase()}`}>
             {report.status}
           </span>
         </div>
@@ -239,7 +359,7 @@ function ReportPage() {
         transition={{ delay: 0.2 }}
       >
         <div className="metrics-score">
-          <SecurityScoreRing score={report.securityScore || 0} />
+          <SecurityScoreRing score={report.securityScore ?? 100} />
           <h3>Security Score</h3>
         </div>
 
@@ -308,28 +428,11 @@ function ReportPage() {
       >
         <div className="ai-section-header">
           <BrainCircuit size={24} />
-          <h2>AI Security Analysis</h2>
+          <h2>AI Security Analysis & Recommendations</h2>
         </div>
 
         <div className="ai-analysis-content">
-          {report.aiAnalysis ? (
-            typeof report.aiAnalysis === "string" ? (
-              <div className="ai-text">
-                {report.aiAnalysis.split("\n").map((line, i) => (
-                  <p key={i}>{line || <br />}</p>
-                ))}
-              </div>
-            ) : (
-              <pre className="ai-json">
-                {JSON.stringify(report.aiAnalysis, null, 2)}
-              </pre>
-            )
-          ) : (
-            <div className="ai-unavailable">
-              <BrainCircuit size={32} />
-              <p>AI analysis is currently unavailable for this scan.</p>
-            </div>
-          )}
+          <AIAnalysisView rawAnalysis={report.aiAnalysis} />
         </div>
       </motion.section>
 
