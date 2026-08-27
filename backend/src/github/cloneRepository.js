@@ -3,29 +3,24 @@ const fs = require("fs");
 const path = require("path");
 
 // ======================================================
-// Clone GitHub Repository
+// Clone GitHub Repository (Speed Optimized for Massive Repos)
 // ======================================================
-
 const cloneRepository = async (repositoryUrl) => {
 
     try {
 
         // ---------------------------------------
-        // Create temp folder
+        // Create temp folder safely
         // ---------------------------------------
-
         const cloneRoot = path.join(__dirname, "../../temp");
 
         if (!fs.existsSync(cloneRoot)) {
-
             fs.mkdirSync(cloneRoot, { recursive: true });
-
         }
 
         // ---------------------------------------
         // Create unique repository folder
         // ---------------------------------------
-
         const repositoryName = "repo-" + Date.now();
 
         const clonePath = path.join(
@@ -38,23 +33,24 @@ const cloneRepository = async (repositoryUrl) => {
         console.log("Repository:", repositoryUrl);
 
         // ---------------------------------------
-        // Initialize Git
+        // Initialize Git Engine
         // ---------------------------------------
-
         const git = simpleGit();
 
-        console.log("Starting shallow clone...");
+        console.log("Starting optimized shallow clone...");
 
         // ---------------------------------------
-        // Shallow Clone (Much Faster)
+        // Shallow Clone Configuration
+        // Prevents server freezes on massive repositories 
+        // by discarding tags, branches, and historical logs.
         // ---------------------------------------
-
         await git.clone(
             repositoryUrl,
             clonePath,
             [
-                "--depth",
-                "1"
+                "--depth", "1",           // Only pull down the latest absolute commit
+                "--single-branch",        // Completely ignore secondary branches
+                "--no-tags"               // Discard historical release release tags footprint
             ]
         );
 
@@ -69,7 +65,7 @@ const cloneRepository = async (repositoryUrl) => {
 
         console.error("==================================");
         console.error("Clone Repository Error");
-        console.error(error);
+        console.error(error.message || error);
         console.error("==================================");
 
         throw error;

@@ -1,3 +1,4 @@
+const fs = require("fs"); 
 const validateGitHubRepository = require("../utils/validateRepository");
 const generateScanId = require("../utils/generateScanId");
 const { scanRepository } = require("../services/githubService");
@@ -10,44 +11,38 @@ const {
 } = require("../services/supabaseService");
 
 // ======================================================
-// Create Scan
+// 1. Create Scan (Standard Synchronous Endpoint)
 // POST /api/scan
 // ======================================================
-
 const createScan = async (req, res) => {
+    let folderToCleanup = null; 
+
     try {
         const { repositoryUrl } = req.body;
 
-        // Validate input
         if (!repositoryUrl) {
-            return res.status(400).json({
-                success: false,
-                message: "Repository URL is required.",
-            });
+            return res.status(400).json({ success: false, message: "Repository URL is required." });
         }
 
         if (typeof repositoryUrl !== "string") {
-            return res.status(400).json({
-                success: false,
-                message: "Repository URL must be a string.",
-            });
+            return res.status(400).json({ success: false, message: "Repository URL must be a string." });
         }
 
         const trimmedUrl = repositoryUrl.trim();
+        const sanitizedUrl = validateGitHubRepository(trimmedUrl);
 
-        if (!validateGitHubRepository(trimmedUrl)) {
+        if (!sanitizedUrl) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid GitHub Repository URL. Expected format: https://github.com/owner/repo",
+                message: "Invalid GitHub Repository URL. Expected format: https://github.com",
             });
         }
 
-        // Create scan record in Supabase
         const scanId = generateScanId();
 
         await createScanRecord({
             scanId,
-            repositoryUrl: trimmedUrl,
+            repositoryUrl: sanitizedUrl,
             status: "Scanning",
             totalDependencies: 0,
             vulnerabilitiesFound: 0,
@@ -57,52 +52,60 @@ const createScan = async (req, res) => {
         console.log("========== START SCAN ==========");
         console.log("==================================");
         console.log(`Scan ID: ${scanId}`);
-        console.log(`Repository: ${trimmedUrl}`);
+        console.log(`Repository: ${sanitizedUrl}`);
 
-        // Run the scan
         console.log("1. Cloning repository...");
-
-        const scanResult = await scanRepository(trimmedUrl);
+        const scanResult = await scanRepository(sanitizedUrl);
 
         console.log("\n========== GITHUB SERVICE RESULT ==========");
         console.log(`Success: ${scanResult.success}`);
 
         if (!scanResult.success) {
             await updateScanStatus(scanId, "Failed");
-
             return res.status(500).json({
                 success: false,
                 message: scanResult.message || "Repository scan failed.",
             });
         }
 
-        // Save results to Supabase
-        console.log("3. Saving scan results to Supabase...");
+        if (scanResult.repositoryPath) {
+            folderToCleanup = scanResult.repositoryPath;
+        }
 
-        const saveResult = await saveScanResults(
-            scanId,
-            trimmedUrl,
-            scanResult
-        );
+        const standardizedResult = {
+            ...scanResult,
+            vulnerablePackages: scanResult.vulnerablePackages || [],
+            dependencies: scanResult.dependencies || [],
+            vulnerabilitiesFound: scanResult.vulnerabilitiesFound || 0
+        };
+
+        console.log("3. Saving scan results to Supabase...");
+        const saveResult = await saveScanResults(scanId, sanitizedUrl, standardizedResult);
 
         if (!saveResult.success) {
             await updateScanStatus(scanId, "Failed");
-
             return res.status(500).json({
                 success: false,
                 message: saveResult.message || "Failed to save scan results to Supabase.",
             });
         }
 
-        // Fetch the updated scan from Supabase
         const updatedReport = await getScanReportByScanId(scanId);
 
         console.log("==================================");
         console.log("SCAN COMPLETED");
         console.log(`Dependencies: ${updatedReport?.totalDependencies}`);
         console.log(`Vulnerabilities: ${updatedReport?.vulnerabilitiesFound}`);
-        console.log(`Security Score: ${updatedReport?.securityScore}`);
         console.log("==================================");
+
+        if (folderToCleanup && fs.existsSync(folderToCleanup)) {
+            try {
+                console.log(`自动清理: Deleting temporary folder: ${folderToCleanup}`);
+                fs.rmSync(folderToCleanup, { recursive: true, force: true });
+            } catch (err) {
+                console.error("⚠ Cleanup warning:", err.message);
+            }
+        }
 
         return res.status(201).json({
             success: true,
@@ -112,7 +115,9 @@ const createScan = async (req, res) => {
 
     } catch (error) {
         console.error("Scan Error:", error.message);
-
+        if (folderToCleanup && fs.existsSync(folderToCleanup)) {
+            try { fs.rmSync(folderToCleanup, { recursive: true, force: true }); } catch (e){}
+        }
         return res.status(500).json({
             success: false,
             message: "An unexpected error occurred during the scan.",
@@ -121,59 +126,127 @@ const createScan = async (req, res) => {
 };
 
 // ======================================================
-// Get All Scans
-// GET /api/scan
+// 2. Real-Time Asynchronous Stream Scan Hub (SSE)
+// GET /api/scan/stream?repositoryUrl=...
 // ======================================================
+const streamScan = async (req, res) => {
+    const { repositoryUrl } = req.query;
+    let folderToCleanup = null;
 
-const getAllScans = async (req, res) => {
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.setHeader("X-Accel-Buffering", "no");
+
+    const sendProgress = (status, progress, message, payload = null) => {
+        res.write(`data: ${JSON.stringify({ success: true, status, progress, message, ...payload })}\n\n`);
+    };
+
     try {
-        const scans = await getAllScansFromSupabase();
+        if (!repositoryUrl) {
+            res.write(`data: ${JSON.stringify({ success: false, message: "Repository URL is required." })}\n\n`);
+            return res.end();
+        }
 
-        return res.status(200).json({
-            success: true,
-            total: scans.length,
-            data: scans,
+        const trimmedUrl = repositoryUrl.trim();
+        const sanitizedUrl = validateGitHubRepository(trimmedUrl);
+
+        if (!sanitizedUrl) {
+            res.write(`data: ${JSON.stringify({ success: false, message: "Invalid or unsupported format. Expected: https://github.com" })}\n\n`);
+            return res.end();
+        }
+
+        sendProgress("Initializing", 10, "Setting up real-time secure scanning sandbox workspace...");
+        const scanId = generateScanId();
+
+        await createScanRecord({
+            scanId,
+            repositoryUrl: sanitizedUrl,
+            status: "Scanning",
+            totalDependencies: 0,
+            vulnerabilitiesFound: 0,
         });
+
+        sendProgress("Cloning", 30, "Performing optimized shallow clone from GitHub repository endpoints...");
+        const scanResult = await scanRepository(sanitizedUrl);
+
+        if (!scanResult || !scanResult.success) {
+            await updateScanStatus(scanId, "Failed");
+            res.write(`data: ${JSON.stringify({ success: false, message: scanResult?.message || "Repository clone failed." })}\n\n`);
+            return res.end();
+        }
+
+        if (scanResult.repositoryPath) {
+            folderToCleanup = scanResult.repositoryPath;
+        }
+
+        const standardizedResult = {
+            ...scanResult,
+            vulnerablePackages: scanResult.vulnerablePackages || [],
+            dependencies: scanResult.dependencies || [],
+            vulnerabilitiesFound: scanResult.vulnerabilitiesFound || 0
+        };
+
+        sendProgress("Parsing", 60, `Deep checking dependency structures (${standardizedResult.projectType || 'Ecosystem'})...`);
+        
+        sendProgress("Persisting", 85, "Uploading vulnerability database logs directly to Supabase storage...");
+        const saveResult = await saveScanResults(scanId, sanitizedUrl, standardizedResult);
+
+        if (!saveResult || !saveResult.success) {
+            await updateScanStatus(scanId, "Failed");
+            res.write(`data: ${JSON.stringify({ success: false, message: "Failed to persist security records." })}\n\n`);
+            return res.end();
+        }
+
+        const updatedReport = await getScanReportByScanId(scanId);
+
+        sendProgress("Completed", 100, "Scan finished successfully!", { data: updatedReport });
+        res.end();
 
     } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Failed to retrieve scans.",
-        });
+        console.error("Stream Connection Error Loop:", error.message);
+        res.write(`data: ${JSON.stringify({ success: false, message: `Streaming processing error: ${error.message}` })}\n\n`);
+        res.end();
+    } finally {
+        if (folderToCleanup && fs.existsSync(folderToCleanup)) {
+            try {
+                console.log(`🧹 Stream Cleanup: Evicting storage footprint at: ${folderToCleanup}`);
+                fs.rmSync(folderToCleanup, { recursive: true, force: true });
+            } catch (err) {}
+        }
     }
 };
 
 // ======================================================
-// Get Scan By Scan ID
+// 3. Get All Scans
+// GET /api/scan
+// ======================================================
+const getAllScans = async (req, res) => {
+    try {
+        const scans = await getAllScansFromSupabase();
+        return res.status(200).json({ success: true, total: scans.length, data: scans });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Failed to retrieve scans." });
+    }
+};
+
+// ======================================================
+// 4. Get Scan By Scan ID
 // GET /api/scan/:scanId
 // ======================================================
-
 const getScanById = async (req, res) => {
     try {
         const scan = await getScanReportByScanId(req.params.scanId);
-
-        if (!scan) {
-            return res.status(404).json({
-                success: false,
-                message: "Scan not found.",
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            data: scan,
-        });
-
+        if (!scan) return res.status(404).json({ success: false, message: "Scan not found." });
+        return res.status(200).json({ success: true, data: scan });
     } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Failed to retrieve scan.",
-        });
+        return res.status(500).json({ success: false, message: "Failed to retrieve scan." });
     }
 };
 
 module.exports = {
     createScan,
+    streamScan,
     getAllScans,
     getScanById,
 };
