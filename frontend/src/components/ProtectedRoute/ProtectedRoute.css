@@ -1,0 +1,138 @@
+/* ======================================================
+   Protected Route Loading Screen
+   ====================================================== */
+
+.protected-loading {
+
+    min-height: calc(100vh - 80px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 30px;
+}
+
+
+/* ======================================================
+   Loading Card
+   ====================================================== */
+
+.protected-loading-card {
+
+    width: min(430px, 100%);
+
+    padding: 42px 34px;
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18, 26, 45, 0.96),
+            rgba(10, 16, 28, 0.98)
+        );
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.45);
+
+    backdrop-filter: blur(25px);
+
+    text-align: center;
+}
+
+
+/* ======================================================
+   Logo
+   ====================================================== */
+
+.protected-logo {
+
+    width: 64px;
+
+    height: 64px;
+
+    margin: 0 auto 24px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 18px;
+
+    color: #38bdf8;
+
+    background:
+        rgba(56, 189, 248, 0.10);
+
+    border:
+        1px solid rgba(56, 189, 248, 0.20);
+
+    box-shadow:
+        0 0 35px rgba(56, 189, 248, 0.12);
+}
+
+
+/* ======================================================
+   Spinner
+   ====================================================== */
+
+.protected-spinner {
+
+    margin-bottom: 18px;
+
+    color: #38bdf8;
+
+    animation:
+        protected-spin 1s linear infinite;
+}
+
+
+/* ======================================================
+   Text
+   ====================================================== */
+
+.protected-loading-card h2 {
+
+    margin: 0 0 10px;
+
+    color: white;
+
+    font-size: 21px;
+
+    font-weight: 700;
+}
+
+
+.protected-loading-card p {
+
+    margin: 0;
+
+    color: #94a3b8;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+
+/* ======================================================
+   Animation
+   ====================================================== */
+
+@keyframes protected-spin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
