@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 
 import CountUp from "../../components/CountUp/CountUp";
+import CircularScore from "../../components/ui/CircularScore/CircularScore";
 
 // ======================================================
 // Security Score Ring
@@ -37,17 +38,6 @@ import CountUp from "../../components/CountUp/CountUp";
 
 function SecurityScoreRing({ score = 0 }) {
   const safeScore = Math.max(0, Math.min(100, Number(score) || 0));
-  const radius = 54;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (safeScore / 100) * circumference;
-
-  const getColor = (s) => {
-    if (s >= 90) return "#22c55e";
-    if (s >= 75) return "#3b82f6";
-    if (s >= 50) return "#f59e0b";
-    if (s >= 25) return "#f97316";
-    return "#ef4444";
-  };
 
   const getLabel = (s) => {
     if (s >= 90) return "Excellent";
@@ -59,39 +49,13 @@ function SecurityScoreRing({ score = 0 }) {
 
   return (
     <div className="report-score-ring">
-      <svg width="140" height="140" viewBox="0 0 120 120">
-        <circle
-          cx="60"
-          cy="60"
-          r={radius}
-          fill="none"
-          stroke="rgba(255,255,255,0.06)"
-          strokeWidth="8"
-        />
-        <circle
-          cx="60"
-          cy="60"
-          r={radius}
-          fill="none"
-          stroke={getColor(safeScore)}
-          strokeWidth="8"
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          transform="rotate(-90 60 60)"
-          className="score-circle-animated"
-        />
-      </svg>
-
-      <div className="score-inner">
-        <span className="score-value">
-          <CountUp from={0} to={safeScore} duration={1.5} />
-        </span>
-        <span className="score-label">{getLabel(safeScore)}</span>
-      </div>
+      <CircularScore score={safeScore} size={130} stroke={9} />
+      <span className="score-rating">{getLabel(safeScore)}</span>
     </div>
   );
 }
+
+
 
 // ======================================================
 // AI Analysis Component

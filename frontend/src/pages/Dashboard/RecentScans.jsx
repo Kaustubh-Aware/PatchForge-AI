@@ -1,5 +1,6 @@
 import "./RecentScans.css";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 import {
   GitBranch,
@@ -41,7 +42,13 @@ function RecentScans({ scans = [], loading = false }) {
   const recentList = scans.slice(0, 4);
 
   return (
-    <section className="recent-scans">
+    <motion.section
+      className="recent-scans"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
       <div className="recent-header">
         <div>
           <h2>Recent Scans</h2>
@@ -74,17 +81,21 @@ function RecentScans({ scans = [], loading = false }) {
             </button>
           </div>
         ) : (
-          recentList.map((scan) => {
+          recentList.map((scan, idx) => {
             const repoName = scan.repositoryUrl
               ? scan.repositoryUrl.replace(/^https?:\/\/github\.com\//, "")
               : "Unknown Repo";
 
             return (
-              <div
+              <motion.div
                 className="scan-card"
                 key={scan.scanId}
                 onClick={() => navigate(`/report/${scan.scanId}`)}
                 style={{ cursor: "pointer" }}
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.08, duration: 0.35 }}
               >
                 <div className="scan-left">
                   <div className="repo-icon">
@@ -110,12 +121,12 @@ function RecentScans({ scans = [], loading = false }) {
                     {formatRelativeTime(scan.createdAt || scan.startedAt)}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })
         )}
       </div>
-    </section>
+    </motion.section>
   );
 }
 

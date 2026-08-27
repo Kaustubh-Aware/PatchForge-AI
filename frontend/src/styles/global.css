@@ -1,84 +1,177 @@
 @import "./variables.css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+/* =====================================================
+   PatchForge AI — Global Base Styles
+   ===================================================== */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-html{
-    scroll-behavior:smooth;
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  height: 100%;
 }
 
-body{
-
-    background:var(--background);
-
-    color:var(--text-primary);
-
-    font-family:
-    Inter,
-    Poppins,
-    sans-serif;
-
-    overflow-x:hidden;
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-feature-settings: "cv11", "ss01";
+  overflow-x: hidden;
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-a{
-
-    color:inherit;
-
-    text-decoration:none;
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-button{
-
-    border:none;
-
-    cursor:pointer;
-
-    font:inherit;
+button {
+  border: none;
+  cursor: pointer;
+  font: inherit;
 }
 
-img{
-
-    max-width:100%;
-
-    display:block;
+img {
+  max-width: 100%;
+  display: block;
 }
 
-ul{
-
-    list-style:none;
+ul {
+  list-style: none;
 }
 
 input,
-textarea{
-
-    font:inherit;
-
-    outline:none;
+textarea,
+select {
+  font: inherit;
+  outline: none;
 }
 
-#root{
-
-    min-height:100vh;
+#root {
+  min-height: 100vh;
+  position: relative;
+  isolation: isolate;
 }
 
-/* Layout */
+/* ─── Scroll Progress Bar ─────────────────────────── */
 
-.main-layout{
-
-    display:flex;
-
-    gap:24px;
-
-    padding:24px;
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: var(--accent-gradient);
+  z-index: 9999;
+  transform-origin: left;
+  box-shadow: var(--glow-cyan);
+  pointer-events: none;
 }
 
-.page-content{
+/* ─── Layout ─────────────────────────────────────── */
 
-    flex:1;
-
-    min-width:0;
+.main-layout {
+  display: flex;
+  gap: 0;
+  padding: 0;
+  padding-top: 100px;  /* space for fixed navbar */
+  min-height: 100vh;
 }
+
+.page-content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ─── Scrollbar ───────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.4);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.7);
+}
+
+/* ─── Selection ───────────────────────────────────── */
+
+::selection {
+  background: rgba(6, 182, 212, 0.3);
+  color: #fff;
+}
+
+/* ─── Focus Visible ───────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Gradient Text Utility ───────────────────────── */
+
+.gradient-text {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Glass Card Utility ──────────────────────────── */
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+}
+
+/* ─── Prefers Reduced Motion ──────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .cyber-particle,
+  .cyber-grid::before,
+  .mouse-glow {
+    display: none !important;
+  }
+}
+
+/* ─── Dashboard Error Banner ──────────────────────── */
+
+.dashboard-error {
+  margin: 12px 24px;
+  padding: 12px 16px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-md);
+  color: #fca5a5;
+  font-size: 0.875rem;
+}

@@ -1,6 +1,7 @@
-import "./TopVulnerabilities.css";
+﻿import "./TopVulnerabilities.css";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { getVulnerabilities } from "../../services/scanService";
 
 import {
@@ -30,7 +31,6 @@ function TopVulnerabilities({ scans = [] }) {
         setLoading(true);
         const res = await getVulnerabilities(latestScan.scanId);
         if (res.success && Array.isArray(res.data)) {
-          // Sort by severity (CRITICAL > HIGH > MEDIUM > LOW)
           const order = { CRITICAL: 4, HIGH: 3, MEDIUM: 2, LOW: 1, UNKNOWN: 0 };
           const sorted = [...res.data].sort(
             (a, b) => (order[b.severity] || 0) - (order[a.severity] || 0)
@@ -61,7 +61,13 @@ function TopVulnerabilities({ scans = [] }) {
   };
 
   return (
-    <section className="top-vulnerabilities">
+    <motion.section
+      className="top-vulnerabilities"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
       <div className="tv-header">
         <div>
           <span className="tv-tag">ACTIVE THREATS</span>
@@ -72,7 +78,7 @@ function TopVulnerabilities({ scans = [] }) {
         {latestScan && (
           <button
             className="tv-view-btn"
-            onClick={() => navigate(`/report/${latestScan.scanId}`)}
+            onClick={() => navigate(/report/)}
           >
             View Report
           </button>
@@ -91,12 +97,16 @@ function TopVulnerabilities({ scans = [] }) {
           </div>
         ) : (
           vulnerabilities.map((item, idx) => (
-            <div
+            <motion.div
               key={item.id || item.vulnerabilityId || idx}
               className="tv-card"
               style={{
                 "--accent": getColor(item.severity),
               }}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1, duration: 0.4 }}
             >
               <div className="tv-top">
                 <div className="tv-severity">
@@ -136,18 +146,18 @@ function TopVulnerabilities({ scans = [] }) {
 
                 <button
                   onClick={() =>
-                    latestScan && navigate(`/report/${latestScan.scanId}`)
+                    latestScan && navigate(/report/)
                   }
                 >
                   Details
                   <ArrowRight size={16} />
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))
         )}
       </div>
-    </section>
+    </motion.section>
   );
 }
 

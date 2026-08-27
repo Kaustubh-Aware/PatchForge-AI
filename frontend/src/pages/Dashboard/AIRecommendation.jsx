@@ -1,5 +1,6 @@
 import "./AIRecommendation.css";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 import {
   BrainCircuit,
@@ -24,7 +25,13 @@ export default function AIRecommendation({ scans = [] }) {
     : 95;
 
   return (
-    <section className="ai-panel">
+    <motion.section
+      className="ai-panel"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
       <div className="ai-glow"></div>
 
       <div className="ai-header">
@@ -149,6 +156,6 @@ export default function AIRecommendation({ scans = [] }) {
           </button>
         )}
       </div>
-    </section>
+    </motion.section>
   );
 }

@@ -1,421 +1,416 @@
-/* ==========================================================
-   PATCHFORGE AI — SENIOR ENGINEER REDESIGNED NAVBAR
-==========================================================*/
+﻿/* =====================================================
+   Navbar - Glassmorphic Floating Pill
+   ===================================================== */
 
-.navbar-container {
-  position: sticky;
-  top: 14px;
-  width: min(96%, 1500px);
-  margin: 14px auto 24px;
+.navbar-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 24px 0;
+  pointer-events: none;
 }
 
-/* ==========================================================
-   MAIN NAVBAR BAR
-==========================================================*/
-.navbar {
-  height: 74px;
+/* ─── Floating Sticky Pill (max-width 1200px, border-radius 50px, margin-top 20px) ─── */
+
+.navbar-pill {
+  pointer-events: all;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 28px;
-  border-radius: 20px;
-  background: rgba(13, 18, 34, 0.88);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 16px;
+  width: 100%;
+  max-width: 1200px;
+  padding: 10px 22px;
+  border-radius: 50px;
+  background: rgba(5, 8, 16, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(99, 102, 241, 0.1);
-  position: relative;
-  transition: all 0.3s ease;
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(6, 182, 212, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.navbar:hover {
-  border-color: rgba(99, 102, 241, 0.22);
-  box-shadow:
-    0 20px 50px rgba(0, 0, 0, 0.45),
-    0 0 30px rgba(99, 102, 241, 0.12);
-}
+/* ─── Logo with Rotating Conic-Gradient Shield & Pulse ─── */
 
-/* ==========================================================
-   1. BRAND & LOGO
-==========================================================*/
-.navbar__logo {
+.navbar-logo {
   display: flex;
   align-items: center;
+  gap: 11px;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.navbar-logo-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: rgba(10, 14, 26, 0.9);
+  color: #06b6d4;
+  overflow: hidden;
+  box-shadow: 0 0 14px rgba(6, 182, 212, 0.35);
+  animation: logo-pulse 3s ease-in-out infinite;
   flex-shrink: 0;
 }
 
-.logo-link {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.logo-icon-wrapper {
-  position: relative;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo-glow {
+.navbar-logo-icon::before {
+  content: '';
   position: absolute;
-  inset: -4px;
-  border-radius: 16px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.4), transparent 70%);
-  filter: blur(8px);
-  opacity: 0.7;
-  transition: opacity 0.3s;
+  inset: -60%;
+  background: conic-gradient(from 0deg, #06b6d4, #8b5cf6, #ec4899, #06b6d4);
+  animation: rotate-conic 4s linear infinite;
+  z-index: 0;
 }
 
-.logo-link:hover .logo-glow {
-  opacity: 1;
+.navbar-logo-icon::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: #050810;
+  border-radius: 10px;
+  z-index: 1;
 }
 
-.logo-icon {
+.navbar-logo-icon svg {
   position: relative;
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #4f46e5, #0ea5e9);
-  color: #ffffff;
-  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  transition: transform 0.3s ease;
+  z-index: 2;
 }
 
-.logo-link:hover .logo-icon {
-  transform: translateY(-2px) rotate(-4deg);
+@keyframes rotate-conic {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
-.logo-text {
-  display: flex;
-  flex-direction: column;
+@keyframes logo-pulse {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(6, 182, 212, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(6, 182, 212, 0.6), 0 0 36px rgba(139, 92, 246, 0.4);
+  }
 }
 
-.logo-title-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.logo-text h2 {
-  margin: 0;
-  font-size: 1.25rem;
+.navbar-logo-text {
+  font-size: 0.95rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
-  background: linear-gradient(90deg, #ffffff, #e2e8f0);
+  color: #f1f5f9;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.navbar-logo-ai {
+  background: linear-gradient(135deg, #06b6d4, #8b5cf6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.version-pill {
-  font-size: 0.68rem;
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: rgba(99, 102, 241, 0.16);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #818cf8;
-  letter-spacing: 0.05em;
-}
+/* ─── Center Links with Glowing Gradient Underline ─── */
 
-.logo-subtitle {
-  font-size: 0.75rem;
-  color: #94a3b8;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-}
-
-/* ==========================================================
-   2. CENTER NAVIGATION LINKS
-==========================================================*/
-.navbar__nav-links {
+.navbar-links {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 4px;
+  justify-content: center;
 }
 
-.nav-link-item {
+.navbar-link {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 18px;
-  border-radius: 999px;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-size: 0.84rem;
+  font-weight: 500;
   color: #94a3b8;
-  text-decoration: none;
-  font-size: 0.88rem;
+  transition: color 0.2s ease, background 0.2s ease;
+  white-space: nowrap;
+}
+
+.navbar-link:hover {
+  color: #f1f5f9;
+}
+
+.navbar-link--active {
+  color: #f1f5f9;
   font-weight: 600;
-  transition: all 0.25s ease;
 }
 
-.nav-link-item:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.05);
+.navbar-link::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: linear-gradient(90deg, #06b6d4, #8b5cf6, #ec4899);
+  border-radius: 2px;
+  opacity: 0;
+  transform: scaleX(0);
+  transition: transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.8);
 }
 
-.nav-link-item.active {
-  color: #ffffff;
-  background: rgba(99, 102, 241, 0.16);
-  border: 1px solid rgba(99, 102, 241, 0.28);
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.18);
+.navbar-link:hover::after,
+.navbar-link--active::after {
+  opacity: 1;
+  transform: scaleX(1);
 }
 
-.nav-link-item.active svg {
-  color: #818cf8;
+.navbar-link-indicator {
+  position: absolute;
+  inset: 0;
+  border-radius: 50px;
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  z-index: -1;
 }
 
-/* ==========================================================
-   3. RIGHT ACTIONS
-==========================================================*/
-.navbar__actions {
+/* ─── Right Actions: Ghost Button with Glow & Shine CTA ─── */
+
+.navbar-actions {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
+}
+
+.navbar-ghost-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.navbar-ghost-btn:hover {
+  color: #f1f5f9;
+  border-color: rgba(6, 182, 212, 0.5);
+  background: rgba(6, 182, 212, 0.08);
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.35);
+}
+
+/* Uiverse.io Button by gharsh11032000 style */
+
+.navbar-shine-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 20px;
+  border-radius: 50px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.35);
+}
+
+.navbar-shine-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 28px rgba(6, 182, 212, 0.6), 0 0 40px rgba(139, 92, 246, 0.4);
+}
+
+.navbar-shine-sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.4) 50%, transparent 65%);
+  transform: translateX(-100%);
+  transition: transform 0.65s ease;
+  pointer-events: none;
+}
+
+.navbar-shine-btn:hover .navbar-shine-sweep {
+  transform: translateX(100%);
 }
 
 .navbar-user-pill {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px 6px 8px;
-  border-radius: 9999px;
-  background: rgba(14, 165, 233, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.28);
-  text-decoration: none;
-  transition: all 0.2s ease;
+  padding: 6px 14px 6px 6px;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.25s ease;
+  font-size: 0.82rem;
+  color: #94a3b8;
+  max-width: 170px;
 }
 
 .navbar-user-pill:hover {
-  background: rgba(14, 165, 233, 0.2);
-  border-color: rgba(56, 189, 248, 0.45);
+  background: rgba(6, 182, 212, 0.12);
+  border-color: rgba(6, 182, 212, 0.4);
+  color: #f1f5f9;
+  box-shadow: 0 0 14px rgba(6, 182, 212, 0.2);
 }
 
 .navbar-user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #0284c7;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+  color: #fff;
+  flex-shrink: 0;
 }
 
-.navbar-user-name {
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: #e0f2fe;
-  max-width: 120px;
+.navbar-user-pill span {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.navbar-login-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 10px;
-  color: #cbd5e1;
-  text-decoration: none;
-  font-size: 0.86rem;
   font-weight: 600;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: all 0.25s ease;
 }
 
-.navbar-login-btn:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.09);
-  border-color: rgba(255, 255, 255, 0.16);
-}
+/* ─── Mobile Hamburger ─── */
 
-.navbar-signup-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 10px;
-  color: #38bdf8;
-  text-decoration: none;
-  font-size: 0.86rem;
-  font-weight: 600;
-  background: rgba(14, 165, 233, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.28);
-  transition: all 0.25s ease;
-}
-
-.navbar-signup-btn:hover {
-  color: #ffffff;
-  background: rgba(14, 165, 233, 0.22);
-  border-color: rgba(56, 189, 248, 0.45);
-}
-
-.navbar-scan-cta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 20px;
-  border-radius: 10px;
-  color: #ffffff;
-  text-decoration: none;
-  font-size: 0.88rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #4f46e5, #0ea5e9);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35);
-  transition: all 0.25s ease;
-}
-
-.navbar-scan-cta:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 28px rgba(79, 70, 229, 0.48);
-  filter: brightness(1.08);
-}
-
-.mobile-menu-toggle {
+.navbar-hamburger {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.mobile-menu-toggle:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-/* ==========================================================
-   4. MOBILE DRAWER
-==========================================================*/
-.mobile-nav-drawer {
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 0;
-  right: 0;
-  border-radius: 20px;
-  background: rgba(13, 18, 34, 0.96);
-  backdrop-filter: blur(28px);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-  padding: 20px;
-  animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 999;
+  background: rgba(255, 255, 255, 0.03);
+  color: #cbd5e1;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  cursor: pointer;
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.navbar-hamburger:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f1f5f9;
+  border-color: rgba(6, 182, 212, 0.4);
 }
 
-.mobile-links {
+/* ─── Mobile Slide-Down Drawer ─── */
+
+.navbar-mobile-drawer {
+  pointer-events: all;
+  margin-top: 12px;
+  width: 100%;
+  max-width: 1200px;
+  background: rgba(5, 8, 16, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
+  transform-origin: top center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
 }
 
-.mobile-link-item {
+.navbar-mobile-link {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px 18px;
-  border-radius: 12px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  font-size: 0.92rem;
+  font-weight: 500;
   color: #94a3b8;
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.02);
   transition: all 0.2s ease;
 }
 
-.mobile-link-item:hover,
-.mobile-link-item.active {
-  color: #ffffff;
-  background: rgba(99, 102, 241, 0.16);
-  border-left: 3px solid #6366f1;
+.navbar-mobile-link:hover,
+.navbar-mobile-link--active {
+  background: rgba(6, 182, 212, 0.1);
+  color: #f1f5f9;
+  border: 1px solid rgba(6, 182, 212, 0.2);
 }
 
-.mobile-drawer-divider {
+.navbar-mobile-divider {
   height: 1px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.07);
   margin: 6px 0;
 }
 
-.mobile-cta-btn {
+.navbar-mobile-cta {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 14px 20px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #4f46e5, #0ea5e9);
-  color: #ffffff;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 0.92rem;
   font-weight: 700;
-  font-size: 0.95rem;
-  text-decoration: none;
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
+  color: #fff;
+  background: linear-gradient(135deg, #06b6d4, #8b5cf6);
   margin-top: 4px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
 }
 
-/* ==========================================================
-   RESPONSIVE BREAKPOINTS
-==========================================================*/
-@media (max-width: 992px) {
-  .navbar__nav-links {
+.navbar-mobile-cta:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 28px rgba(6, 182, 212, 0.6);
+}
+
+/* ─── Responsive Queries ─── */
+
+@media (max-width: 860px) {
+  .navbar-links,
+  .navbar-ghost-btn {
     display: none;
   }
 
-  .navbar-login-btn,
-  .navbar-signup-btn {
-    display: none;
-  }
-
-  .mobile-menu-toggle {
+  .navbar-hamburger {
     display: flex;
   }
-}
 
-@media (max-width: 576px) {
-  .navbar {
-    padding: 0 16px;
-    height: 68px;
-  }
-
-  .logo-subtitle {
+  .navbar-shine-btn span {
     display: none;
   }
 
-  .navbar-scan-cta {
+  .navbar-shine-btn {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-wrapper {
+    padding: 12px 14px 0;
+  }
+
+  .navbar-logo-text {
+    display: none;
+  }
+
+  .navbar-user-pill span {
     display: none;
   }
 }

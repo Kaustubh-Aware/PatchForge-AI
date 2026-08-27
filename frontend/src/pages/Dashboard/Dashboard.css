@@ -1,15 +1,64 @@
-.dashboard-error{
+﻿/* =====================================================
+   Dashboard Page Layout & Grid
+   ===================================================== */
 
-    margin:20px 0;
+.dashboard {
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
 
-    padding:16px;
+.dashboard-error {
+  margin: 12px 0;
+  padding: 14px 20px;
+  border-radius: 14px;
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  font-size: 0.88rem;
+  font-weight: 500;
+}
 
-    border-radius:14px;
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
 
-    background:#3b0b0b;
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-width: 0;
+}
 
-    color:#ffd2d2;
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-width: 0;
+}
 
-    border:1px solid #ef4444;
+/* Responsive */
 
+@media (max-width: 1100px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard {
+    padding: 0 16px 40px;
+    gap: 20px;
+  }
+  .left-column,
+  .right-column {
+    gap: 20px;
+  }
 }

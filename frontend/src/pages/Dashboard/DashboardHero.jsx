@@ -1,244 +1,167 @@
-import "./DashboardHero.css";
-import { useNavigate } from "react-router-dom";
-
+﻿import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
-  ShieldCheck,
-  GitBranch,
-  BrainCircuit,
-  Sparkles,
-  ArrowRight,
-  Activity,
-  Cpu,
-  CheckCircle2,
-  ScanSearch,
-  Lock,
+  ShieldCheck, GitBranch, BrainCircuit, Sparkles,
+  ArrowRight, Activity, Cpu, CheckCircle2, ScanSearch,
+  Lock, Zap,
 } from "lucide-react";
+import TiltCard from "../../components/ui/TiltCard/TiltCard";
+import ShineButton from "../../components/ui/ShineButton/ShineButton";
+import "./DashboardHero.css";
 
-function DashboardHero() {
+const stagger = {
+  visible: { transition: { staggerChildren: 0.12 } },
+};
+
+const fadeUp = {
+  hidden:  { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
+};
+
+const TERMINAL_LINES = [
+  { icon: Activity,      text: "Connecting Repository...",    cls: "" },
+  { icon: CheckCircle2,  text: "Repository Connected",        cls: "success" },
+  { icon: ScanSearch,    text: "Building Dependency Graph...",cls: "" },
+  { icon: CheckCircle2,  text: "Dependency Graph Ready",      cls: "success" },
+  { icon: BrainCircuit,  text: "AI Agent Analysing CVEs...",  cls: "" },
+  { icon: null,          text: "3 Vulnerabilities Detected",  cls: "warning" },
+];
+
+export default function DashboardHero() {
   const navigate = useNavigate();
 
   return (
     <section className="hero">
+      <div className="hero-inner">
 
-      {/* Decorative Background */}
+        {/* ── Left Column ─────────────────────────── */}
+        <motion.div
+          className="hero-left"
+          variants={stagger}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.span className="hero-badge" variants={fadeUp}>
+            <Sparkles size={14} />
+            PATCHFORGE AI v2.0
+          </motion.span>
 
-      <div className="hero-gradient"></div>
-      <div className="hero-grid"></div>
+          <motion.h1 className="hero-headline" variants={fadeUp}>
+            Secure Your{" "}
+            <span className="hero-headline--gradient">Open Source</span>
+            <br />
+            Dependencies
+          </motion.h1>
 
-      <span className="particle p1"></span>
-      <span className="particle p2"></span>
-      <span className="particle p3"></span>
-      <span className="particle p4"></span>
+          <motion.p className="hero-sub" variants={fadeUp}>
+            Intelligent vulnerability detection, automated patch generation,
+            dependency intelligence and Git integration powered by AI.
+          </motion.p>
 
-      <div className="hero-left">
+          <motion.div className="hero-buttons" variants={fadeUp}>
+            <ShineButton onClick={() => navigate("/scan")}>
+              <Zap size={16} />
+              Start AI Scan
+            </ShineButton>
 
-        <span className="hero-badge">
-          <Sparkles size={15} />
-          PATCHFORGE AI v2.0
-        </span>
+            <button
+              className="hero-ghost-btn"
+              onClick={() => {
+                const el = document.querySelector(".scan-history");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+                else navigate("/scan");
+              }}
+            >
+              View Reports
+              <ArrowRight size={16} className="hero-ghost-arrow" />
+            </button>
+          </motion.div>
 
-        <h1>
-          Secure Your
-          <br />
-          <span>Open Source</span>
-          <br />
-          Dependencies
-        </h1>
+          <motion.div className="hero-features" variants={fadeUp}>
+            {[
+              [ShieldCheck, "Enterprise Security"],
+              [BrainCircuit, "AI Powered"],
+              [GitBranch, "Git Integration"],
+              [Lock, "Zero Trust"],
+            ].map(([Icon, label]) => (
+              <div className="feature-pill" key={label}>
+                <Icon size={15} />
+                {label}
+              </div>
+            ))}
+          </motion.div>
+        </motion.div>
 
-        <p>
-          Intelligent vulnerability detection, automated patch generation,
-          dependency intelligence and Git integration powered by AI.
-        </p>
+        {/* ── Right Column — 3D AI Core ─────────── */}
+        <motion.div
+          className="hero-right"
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
+        >
+          <TiltCard className="ai-panel">
 
-        <div className="hero-buttons">
+            {/* Panel Header */}
+            <div className="panel-header">
+              <div>
+                <h3>AI Intelligence</h3>
+                <span>Live Security Engine</span>
+              </div>
+              <div className="live-status">
+                <span className="live-dot" />
+                ONLINE
+              </div>
+            </div>
 
-          <button
-            className="primary-btn"
-            onClick={() => navigate("/scan")}
-          >
-            Start AI Scan
-            <ArrowRight size={18} />
-          </button>
+            {/* 3D Orb */}
+            <div className="ai-orb-wrapper">
+              <div className="ai-orb">
+                <div className="orb-ring orb-ring--1" />
+                <div className="orb-ring orb-ring--2" />
+                <div className="orb-ring orb-ring--3" />
+                <div className="orb-core">
+                  <Cpu size={40} />
+                </div>
+              </div>
+            </div>
 
-          <button
-            className="secondary-btn"
-            onClick={() => {
-              const history = document.querySelector(".scan-history");
-              if (history) {
-                history.scrollIntoView({ behavior: "smooth" });
-              } else {
-                navigate("/scan");
-              }
-            }}
-          >
-            View Reports
-          </button>
+            {/* Terminal */}
+            <div className="ai-terminal">
+              {TERMINAL_LINES.map((line, i) => (
+                <motion.p
+                  key={i}
+                  className={line.cls}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.8 + i * 0.25, duration: 0.3 }}
+                >
+                  {line.icon && <line.icon size={13} />}
+                  {line.text}
+                </motion.p>
+              ))}
+            </div>
 
-        </div>
+            {/* Status Grid */}
+            <div className="status-grid">
+              {[
+                [GitBranch, "Git",      "Connected"],
+                [Activity,  "OSV Feed", "Synced"],
+                [BrainCircuit, "AI Agent", "Running"],
+              ].map(([Icon, title, val]) => (
+                <div className="status-card" key={title}>
+                  <Icon size={16} />
+                  <div>
+                    <h4>{title}</h4>
+                    <span>{val}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
 
-        {/* Feature Pills */}
-
-        <div className="hero-features">
-
-          <div className="feature-pill">
-            <ShieldCheck size={18} />
-            Enterprise Security
-          </div>
-
-          <div className="feature-pill">
-            <BrainCircuit size={18} />
-            AI Powered
-          </div>
-
-          <div className="feature-pill">
-            <GitBranch size={18} />
-            Git Integration
-          </div>
-
-          <div className="feature-pill">
-            <Lock size={18} />
-            Zero Trust
-          </div>
-
-        </div>
+          </TiltCard>
+        </motion.div>
 
       </div>
-
-      {/* RIGHT PANEL */}
-
-      <div className="hero-right">
-
-        <div className="ai-panel">
-
-          {/* Header */}
-
-          <div className="panel-header">
-
-            <div>
-
-              <h3>AI Intelligence</h3>
-
-              <span>Live Security Engine</span>
-
-            </div>
-
-            <div className="live-status">
-
-              <span className="live-dot"></span>
-
-              ONLINE
-
-            </div>
-
-          </div>
-
-          {/* AI Core */}
-
-          <div className="scan-circle">
-
-            <div className="circle-ring ring1"></div>
-
-            <div className="circle-ring ring2"></div>
-
-            <div className="circle-ring ring3"></div>
-
-            <div className="circle-core">
-
-              <Cpu size={42} />
-
-            </div>
-
-          </div>
-
-          {/* Live Terminal */}
-
-          <div className="ai-terminal">
-
-            <p>
-              <Activity size={14} />
-              Connecting Repository...
-            </p>
-
-            <p className="success">
-              <CheckCircle2 size={14} />
-              Repository Connected
-            </p>
-
-            <p>
-              <ScanSearch size={14} />
-              Building Dependency Graph...
-            </p>
-
-            <p className="success">
-              <CheckCircle2 size={14} />
-              Dependency Graph Ready
-            </p>
-
-            <p>
-              <BrainCircuit size={14} />
-              AI Agent Analysing CVEs...
-            </p>
-
-            <p className="warning">
-              3 Vulnerabilities Detected
-            </p>
-
-          </div>
-
-          {/* Bottom Status */}
-
-          <div className="status-grid">
-
-            <div className="status-card">
-
-              <GitBranch size={18} />
-
-              <div>
-
-                <h4>Git</h4>
-
-                <span>Connected</span>
-
-              </div>
-
-            </div>
-
-            <div className="status-card">
-
-              <Activity size={18} />
-
-              <div>
-
-                <h4>OSV Feed</h4>
-
-                <span>Synced</span>
-
-              </div>
-
-            </div>
-
-            <div className="status-card">
-
-              <BrainCircuit size={18} />
-
-              <div>
-
-                <h4>AI Agent</h4>
-
-                <span>Running</span>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
     </section>
   );
 }
-
-export default DashboardHero;

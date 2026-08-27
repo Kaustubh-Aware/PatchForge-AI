@@ -1,5 +1,6 @@
 import "./SecurityScore.css";
 import CountUp from "../../components/CountUp/CountUp";
+import { motion } from "framer-motion";
 
 import {
   ShieldCheck,
@@ -34,7 +35,6 @@ function SecurityScore({ scans = [] }) {
     avgScore = Math.round(totalScore / completedScans.length);
   }
 
-  // SVG circular progress calculation
   const radius = 80;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (avgScore / 100) * circumference;
@@ -62,7 +62,13 @@ function SecurityScore({ scans = [] }) {
   const depSafety = getDepSafety();
 
   return (
-    <section className="security-score">
+    <motion.section
+      className="security-score"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
       <div className="security-header">
         <div>
           <span className="security-tag">SECURITY ANALYSIS</span>
@@ -180,7 +186,7 @@ function SecurityScore({ scans = [] }) {
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 
