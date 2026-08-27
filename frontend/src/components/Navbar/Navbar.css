@@ -185,19 +185,57 @@
 .navbar__actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-shrink: 0;
+}
+
+.navbar-user-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 8px;
+  border-radius: 9999px;
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.navbar-user-pill:hover {
+  background: rgba(14, 165, 233, 0.2);
+  border-color: rgba(56, 189, 248, 0.45);
+}
+
+.navbar-user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #0284c7;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-user-name {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #e0f2fe;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .navbar-login-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border-radius: 12px;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
   color: #cbd5e1;
   text-decoration: none;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 600;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -208,15 +246,35 @@
   color: #ffffff;
   background: rgba(255, 255, 255, 0.09);
   border-color: rgba(255, 255, 255, 0.16);
-  transform: translateY(-1px);
+}
+
+.navbar-signup-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  color: #38bdf8;
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 600;
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  transition: all 0.25s ease;
+}
+
+.navbar-signup-btn:hover {
+  color: #ffffff;
+  background: rgba(14, 165, 233, 0.22);
+  border-color: rgba(56, 189, 248, 0.45);
 }
 
 .navbar-scan-cta {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 22px;
-  border-radius: 12px;
+  padding: 9px 20px;
+  border-radius: 10px;
   color: #ffffff;
   text-decoration: none;
   font-size: 0.88rem;
@@ -228,7 +286,7 @@
 }
 
 .navbar-scan-cta:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: 0 10px 28px rgba(79, 70, 229, 0.48);
   filter: brightness(1.08);
 }
@@ -237,9 +295,9 @@
   display: none;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: #ffffff;
@@ -337,7 +395,8 @@
     display: none;
   }
 
-  .navbar-login-btn {
+  .navbar-login-btn,
+  .navbar-signup-btn {
     display: none;
   }
 

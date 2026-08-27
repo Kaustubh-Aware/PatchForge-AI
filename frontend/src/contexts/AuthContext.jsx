@@ -1,35 +1,53 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-const AuthContext = createContext(null);
+const AuthContext = createContext({
+  user: null,
+  loading: true,
+  signUp: async () => { },
+  signIn: async () => { },
+  signOut: async () => { },
+});
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "";
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://placeholder.supabase.co";
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "placeholder_key";
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    try {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }).catch(() => {
+        setLoading(false);
+      });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        setUser(session?.user ?? null);
+        setLoading(false);
+      });
 
-    return () => subscription.unsubscribe();
+      return () => subscription.unsubscribe();
+    } catch (err) {
+      console.warn("Auth initialization warning:", err.message);
+      setLoading(false);
+    }
   }, []);
 
-  const signUp = async (email, password, displayName) => {
+  const signUp = async (email, password, displayName, role = "developer") => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { display_name: displayName } }
+      options: {
+        data: {
+          display_name: displayName,
+          role: role
+        }
+      }
     });
     if (error) throw error;
     return data;
@@ -44,13 +62,15 @@ export function AuthProvider({ children }) {
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
+    setUser(null);
   };
 
   return (
     <AuthContext.Provider value={{ user, loading, signUp, signIn, signOut }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }
 
-
+export const useAuth = () => useContext(AuthContext);
+export default AuthContext;
