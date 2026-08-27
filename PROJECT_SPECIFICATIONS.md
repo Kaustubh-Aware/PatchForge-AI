@@ -312,31 +312,39 @@ CREATE TABLE scan_vulnerabilities (
 
 ---
 
-## 9. Development & Deployment Guide
+### Dedicated Specification Documents
+- 🎨 **Frontend Architecture & Components:** [`FRONTEND_SPECIFICATIONS.md`](file:///H:/Extra%20Cirricular/Hackathon/Innovhack%20Round2/PatchForge-AI/FRONTEND_SPECIFICATIONS.md)
+- ⚙️ **Backend Services & Database:** [`BACKEND_SPECIFICATIONS.md`](file:///H:/Extra%20Cirricular/Hackathon/Innovhack%20Round2/PatchForge-AI/BACKEND_SPECIFICATIONS.md)
 
-### Environment Variables
+---
 
-#### Backend (`backend/.env`)
+### Environment Variables Template
+
+#### Backend (`backend/.env.example`)
 ```env
 PORT=5000
 CORS_ORIGIN=http://localhost:5173
 NODE_ENV=development
 
-SUPABASE_URL=https://kqjhyilogbxzkclzlvxe.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOi...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOi...
+# Supabase Credentials
+SUPABASE_URL=https://<your-project-ref>.supabase.co
+SUPABASE_ANON_KEY=<your-supabase-anon-key>
+SUPABASE_SERVICE_ROLE_KEY=<your-supabase-service-role-key>
 
+# Lyzr AI Credentials
 LYZR_API_URL=https://agent-prod.studio.lyzr.ai/v3/inference/chat/
-LYZR_AGENT_ID=6a89d32f38bd85155cee6bb9
-LYZR_API_KEY=sk-default-w3TRf1wgmjypM8e9kYNBlrJkuBWcrnNF
+LYZR_AGENT_ID=<your-agent-id>
+LYZR_API_KEY=<your-lyzr-api-key>
 ```
 
-#### Frontend (`frontend/.env`)
+#### Frontend (`frontend/.env.example`)
 ```env
-VITE_API_URL=http://localhost:5000/api
-VITE_SUPABASE_URL=https://kqjhyilogbxzkclzlvxe.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOi...
+VITE_API_BASE_URL=http://localhost:5000/api
+VITE_SUPABASE_URL=https://<your-project-ref>.supabase.co
+VITE_SUPABASE_ANON_KEY=<your-supabase-anon-key>
 ```
+
+---
 
 ### Running Locally
 
@@ -354,4 +362,3 @@ npm run dev
 
 - **Backend API:** `http://localhost:5000`
 - **Frontend App:** `http://localhost:5173`
-- **Supabase Dashboard:** `https://supabase.com/dashboard/project/kqjhyilogbxzkclzlvxe`
