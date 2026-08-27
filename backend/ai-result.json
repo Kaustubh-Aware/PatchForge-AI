@@ -1,4 +1,4 @@
 {
-  "success": false,
-  "message": "timeout of 8000ms exceeded"
+  "success": true,
+  "analysis": "No vulnerabilities detected. The repository appears to be secure."
 }

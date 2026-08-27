@@ -6,11 +6,21 @@ const axios = require("axios");
 
 const OSV_API = "https://api.osv.dev/v1/query";
 
+// Map project ecosystems to OSV ecosystem identifiers
+const normalizeEcosystem = (eco) => {
+    if (!eco) return "npm";
+    const lower = eco.toLowerCase();
+    if (lower === "python" || lower === "pypi") return "PyPI";
+    if (lower === "go" || lower === "golang") return "Go";
+    if (lower === "rust" || lower === "crates.io" || lower === "cargo") return "crates.io";
+    return "npm";
+};
+
 // ======================================================
 // Scan Dependencies Against OSV (Concurrent)
 // ======================================================
 
-const scanSingleDependency = async (dependency) => {
+const scanSingleDependency = async (dependency, ecosystem = "npm") => {
     try {
         // Clean version string (e.g. ^4.17.21 -> 4.17.21)
         const cleanVersion = (dependency.version || "").replace(/^[^\d]*/, "");
@@ -18,11 +28,11 @@ const scanSingleDependency = async (dependency) => {
         const queryPayload = {
             package: {
                 name: dependency.name,
-                ecosystem: "npm",
+                ecosystem: normalizeEcosystem(ecosystem),
             },
         };
 
-        if (cleanVersion) {
+        if (cleanVersion && cleanVersion !== "0.0.0") {
             queryPayload.version = cleanVersion;
         }
 
@@ -49,7 +59,7 @@ const scanSingleDependency = async (dependency) => {
     }
 };
 
-const scanDependencies = async (dependencies) => {
+const scanDependencies = async (dependencies, ecosystem = "npm") => {
     try {
         if (!Array.isArray(dependencies) || dependencies.length === 0) {
             return {
@@ -62,7 +72,7 @@ const scanDependencies = async (dependencies) => {
 
         // Query OSV concurrently in parallel
         const results = await Promise.all(
-            dependencies.map((dep) => scanSingleDependency(dep))
+            dependencies.map((dep) => scanSingleDependency(dep, ecosystem))
         );
 
         const vulnerablePackages = results.filter(Boolean);

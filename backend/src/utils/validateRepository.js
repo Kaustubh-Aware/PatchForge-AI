@@ -19,8 +19,9 @@ const validateGitHubRepository = (url) => {
 
         const parsedUrl = new URL(cleanedUrl);
 
-        // Ensure host is exactly github.com
-        if (parsedUrl.hostname !== "github.com" && parsedUrl.hostname !== "://github.com") {
+        // Ensure host is exactly github.com or www.github.com
+        const host = parsedUrl.hostname.toLowerCase();
+        if (host !== "github.com" && host !== "www.github.com") {
             return null;
         }
 
@@ -28,17 +29,21 @@ const validateGitHubRepository = (url) => {
         // Example: "/facebook/react" -> ["facebook", "react"]
         const pathSegments = parsedUrl.pathname.split("/").filter(s => s.length > 0);
 
-        // CRITICAL FIX: A valid repository target must have exactly 2 path segments.
-        // 0 segments (https://github.com) or 1 segment (https://github.com) will return null.
-        if (pathSegments.length !== 2) {
+        // A valid repository target must have at least 2 path segments (owner and repo).
+        // If it has .git suffix, strip it
+        if (pathSegments.length < 2) {
             return null;
         }
 
         const owner = pathSegments[0];
-        const repo = pathSegments[1];
+        const repo = pathSegments[1].replace(/\.git$/, "");
+
+        if (!owner || !repo) {
+            return null;
+        }
 
         // Return a perfectly formatted URL
-        return `https://github.com{owner}/${repo}`;
+        return `https://github.com/${owner}/${repo}`;
     } catch (e) {
         return null;
     }
